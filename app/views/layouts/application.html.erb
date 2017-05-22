@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <title>Pisos & Muros</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= yield :css %>
+  <%= csrf_meta_tags %>
+</head>
+
+<body>
+	<%= yield %>
+
+	<%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+	<%= yield :javascript %>
+
+	<%= button_tag(:img_url, type: 'button', id: 'piso_img_url', class: 'hide', value: nil) %>
+	<%= button_tag(:rotar, type: 'button', id: 'piso_rotar', class: 'hide', value: nil) %>
+
+	<%= button_tag(:img_url, type: 'button', id: 'muro_img_url', class: 'hide', value: nil) %>
+	<%= button_tag(:rotar, type: 'button', id: 'muro_rotar', class: 'hide', value: nil) %>
+
+		<%= button_tag(:goHome_App, type: 'button', id: 'goHome_App', class: 'hide', value: nil) %>
+</body>
+
+</html>

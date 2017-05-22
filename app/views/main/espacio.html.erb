@@ -1,0 +1,230 @@
+<!-- Dropdown Structure -->
+<ul id="dropdown1" class="dropdown-content">
+  <%= form_for(carrito, url: carito_send_path, html: {id: 'carrito_form', format: :json}) do |f| %>
+      <div id="carrito_container">
+
+      </div>
+      <li class="divider"></li>
+      <li data-total="<%= carrito.total %>" id="carrito-precio-total">
+        <span>Total: $<%= carrito.total %></span>
+      </li>
+      <li>
+        <a class="waves-effect waves-light btn" href="#modal1">Enviar</a>
+      </li>
+  <% end -%>
+</ul>
+<div id="modal1" class="modal">
+  <div class="modal-content">
+    <button class="close" id="close-modal1"><i class="material-icons">close</i></button>
+    <h4>Ingresa tu correo </h4>
+    <div class="input-field col s12">
+      <input type="email", class="validate", placeholder="Email", id="email_modal">
+    </div>
+  </div>
+  <div class="modal-footer">
+    <input type="button", id="buttonModal1", class="waves-effect waves-light btn modal-trigger", value="Enviar">
+  </div>
+</div>
+<!-- MODAL el trigger es el boton enviar -->
+<div id="modal2" class="modal">
+  <div class="modal-content">
+    <button class="close" id="close-modal2"><i class="material-icons">close</i></button>
+    <h4>Su mensaje fue enviado</h4>
+    <h6>Gracias por preferirnos</h6>
+  </div>
+  <div class="modal-footer">
+    <input type="button", id="buttonModal2", class="modal-action modal-close waves-effect waves-green btn-flat", value="Cerrar">
+  </div>
+</div><!--modal mensaje final el trigger es el boton enviar del modal 1-->
+
+
+<div class="navbar-fixed "><!--navbar-->
+  <nav>
+    <div class="nav-wrapper">
+      <a href="#!" class="brand-logo center">
+        <%= image_tag('logo.png') %>
+      </a>
+
+      <ul style="float:right">
+        <li>
+          <a class=" dropdown-button  btn-flat " id="autorenew_bottom" href="javascript:void(0)">
+            <i class="material-icons car carrito-icon">autorenew</i>
+          </a>
+        </li>
+      </ul>
+
+      <ul class="left">
+        <li>
+          <a class="dropdown-button btn-flat tooltipped" href="#!" data-activates="dropdown1" data-delay="50" data-tooltip="Revise Su compra">
+            <i class="material-icons car carrito-icon">add_shopping_cart</i>
+            <span class="badge hide" data-count="0" id="carrito-badge" style="display: inline-block;
+  float: none !important;
+  margin-left: 15px !important;
+  line-height: 22px !important;
+  height: 20px !important;
+  background-color: white !important;
+  color: #E10024 !important;
+  border-radius: 14px !important;"></span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</div>
+<div id="loading_app" style="display:none;position:absolute;top:0;bottom:0; z-index:1;background-color:rgba(0, 0, 0, 0.3);width:100%; ">
+  <div class="spinner">
+    <div class="dot1"></div>
+    <div class="dot2"></div>
+  </div>
+
+</div>
+<div class="fondo" style="display:block;">
+  <div class="main-container" style="/*background-color:red;*/ ">
+
+            <div id="instrucciones" style="position:absolute;top:10px;bottom:10px; width:80%; padding-right:50px; margin-left:300px; z-index:1;background-color: rgba(0, 0, 0, 0.55);">
+                <div style="text-align:center;font-size:3.5em;font-weight:bold;color:#fff;margin-bottom:50px;margin-top:20px;">
+                      Vive esta experiencia en 6 pasos.
+                </div>
+
+                <div>
+                      <ul style="padding-left:40px;color:#fff; font-size:2em;text-align:justify;">
+                          <li style="margin-bottom:40px;"><b>Paso #1 : </b>Selecciona Categorías de productos para Pisos y/o Muros en el panel ubicado al costado izquierdo de la pantalla.</li>
+                            <li style="margin-bottom:40px;"><b>Paso #2 : </b>Desliza para ver todas los productos de la categoría. </li>
+                            <li style="margin-bottom:40px;"><b>Paso #3 :</b> Para Proyectar el producto de tu gusto, debes presionar el botón :
+                              <a id="scale-demo"  class="btn-floating btn-small scale-transition set_background">
+                                <i class="material-icons">visibility</i>
+                              </a> ubicado en la ficha del producto.
+                              </li>
+                              <li style="margin-bottom:40px;"><b>Paso #4 :</b> Si deseas rotar el producto en la proyección, presiona el botón : <a href="#" class="btn-floating btn-small scale-transition 3d_rotation rotate_background">
+                                <i class="material-icons">3d_rotation</i>
+                              </a>
+
+                            </a> ubicado en la ficha del producto.</li>
+                              <li style="margin-bottom:40px;"><b>Paso #5 :</b> Si deseas incluirlo a tu carro de compras, presiona el botón :  <a class="btn-floating btn-small scale-transition shopping_cart">
+                              <i class="material-icons"dropdown-button btn-flat tooltipped>shopping_cart</i>
+                            </a> ubicado en la ficha del producto.</li>
+                              <li style="margin-bottom:40px;"><b>Paso #6 :</b> Si deseas enviar los productos seleccionados a tu correo, debes pinchar el icono
+                                  ubicado en la zona superior izquierda de la pantalla y luego presionar el botón enviar  . Finalmente ingresar tu correo. </li>
+                      </ul>
+                </div>
+            </div>
+
+
+    <div class="" style="min-height:50%; position:relative;overflow:hidden;">
+
+      <div  style="float:left;width:230px;  position:absolute; top:0; bottom:0; background-color: rgba(0, 0, 0, 0.3); padding-left:10px;">
+        <h5 style="margin-top:10px; ">Muros</h5>
+      <!-- MUROS -->
+      <div class="row" style="margin-bottom:0px;">
+        <div class="col s6 m6 l6">
+          <%= link_to(products_by_category_path(categories_types[:muro], 'cat2920039'), class: 'category-link') do %>
+            <%= image_tag('ceramicaMarmol.jpg', class: 'circle hoverable ', alt: 'Elegir Papel') %>
+            <span class="title_cat">Ceramica<br/>Marmolada</span>
+          <% end -%>
+        </div>
+      <div class="col s6 m6 l6 ">
+          <%= link_to(products_by_category_path(categories_types[:muro], 'scat102690'), class: 'category-link') do %>
+            <%= image_tag('muros.jpg', class: 'circle hoverable', id: '', alt: 'Elegir Cerámicas') %>
+            <span class="title title_cat">Ceramica<br/>Lisa</span>
+          <% end -%>
+        </div>
+      </div><!--row-->
+      <div class="row" style="margin-bottom:0px;">
+        <div class="col s6 m6 l6 ">
+          <%= link_to(products_by_category_path(categories_types[:muro], 'scat991120'), class: 'category-link') do %>
+            <%= image_tag('porcelanato.jpg', class: 'circle hoverable', id: '', alt: 'Elegir Porcelanato') %>
+            <span class="title title_cat">Porcelanato</span>
+          <% end -%>
+        </div>
+
+        <div class="col s6 m6 l6 ">
+          <%= link_to(products_by_category_path(categories_types[:muro], 'cat1410197'), class: 'category-link') do %>
+            <%= image_tag('papel.jpg', class: 'circle hoverable', id: '', alt: 'Elegir Porcelanato') %>
+            <span class="title title_cat">Papel Mural</span>
+          <% end -%>
+        </div>
+
+        <!--  <div class="col s6 m6 l6 segundo">
+          <%= link_to(products_by_category_path(categories_types[:muro], 'scat963904'), class: 'category-link') do %>
+            <%= image_tag('living2.jpg', class: 'circle hoverable', alt: 'Elegir Pintura') %>
+            <span>Pintura</span>
+          <% end -%>
+        </div>
+        <div class="col s6 m6 l6 segundo">
+          <%= link_to(products_by_category_path(categories_types[:muro], 'scat963248'), class: 'category-link') do %>
+            <%= image_tag('foto.jpg', class: 'circle hoverable', id: '', alt: 'Elegir Decomural') %>
+            <span class="title">Decomural</span>
+          <% end -%>
+        </div>-->
+      </div>
+
+    </div>
+
+      <div style="width:87%;float:right;  padding-left:30px; padding-right:30px;  overflow:hidden;">
+
+
+        <div  class="slick-carousel" style="margin-left:30px;" id="muros_carousel">
+        </div>
+        <br/>
+    </div>
+
+    </div>
+
+      <!-- CARRUSEL MUROS-->
+
+      <!-- CARRUSEL PISOS -->
+
+      <div class="" style="width:100%; min-height:50%; position:relative;overflow:hidden;">
+              <div  style="width:230px;float:left;position:absolute; top:0; bottom:0; overflow:hidden; background-color: rgba(0, 0, 0, 0.3); padding-left:10px;">
+              <h5 style="margin-top:10px;">Pisos</h5>
+
+              <div class="row" style="margin-bottom:0px;">
+                <!--<div class="col s6 m6 l6">
+                  <%= link_to(products_by_category_path(categories_types[:piso], 'scat102690'), class: 'category-link') do %>
+                    <%= image_tag('http://www.triplea.cl/imagesPisosYmuros/ImagenesAplicativo/ceramica.jpg', class: 'circle hoverable', alt: 'Elegir Cerámica') %>
+                    <span class="title_cat">ceramica</span>
+                  <% end -%>
+                </div>-->
+                <div class="col s6 m6 l6">
+                  <%= link_to(products_by_category_path(categories_types[:piso], 'scat552404'), class: 'category-link') do %>
+                    <%= image_tag('flotante.png', class: 'circle hoverable', id: '', alt: 'Elegir Flotante') %>
+                    <span class="title title_cat">Flotante</span>
+                  <% end -%>
+                </div>
+                <div class="col s6 m6 l6 ">
+                  <%= link_to(products_by_category_path(categories_types[:piso], 'scat552357'), class: 'category-link') do %>
+                    <%= image_tag('madera.jpg', class: 'circle hoverable', alt: 'Elegir Madera') %>
+                    <span class="title_cat">Madera</span>
+                  <% end -%>
+                </div>
+              </div><!--row-->
+              <div class="row" style="margin-bottom:0px;">
+
+                <div class="col s6 m6 l6 ">
+                  <%= link_to(products_by_category_path(categories_types[:piso], 'scat991120'), class: 'category-link') do %>
+                    <%= image_tag('porcelanato.jpg', class: 'circle hoverable', id: '', alt: 'Elegir Porcelanato') %>
+                    <span class="title title_cat">Porcelanato</span>
+                  <% end -%>
+                </div>
+                <div class="col s6 m6 l6 ">
+                  <%= link_to(products_by_category_path(categories_types[:piso], 'cat2880013'), class: 'category-link') do %>
+                    <%= image_tag('vinilico.jpg', class: 'circle hoverable', alt: 'Elegir Vinilico') %>
+                    <span class="title_cat">Vinilico</span>
+                  <% end -%>
+                </div>
+              </div>
+              </div>
+              <div style="width:87%;float:right;  height:auto;  padding-left:30px; padding-right:30px; overflow:hidden;position:relative;">
+
+
+              <div class="slick-carousel" style="margin-left:30px;" id="pisos_carousel">
+              </div>
+            </div>
+          </div>
+
+        <div class="">
+      <!--CARRUSEL PISOS -->
+  </div><!--main container -->
+</div><!--fondo-->
+
+<footer></footer>

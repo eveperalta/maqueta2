@@ -1,0 +1,37 @@
+<%= fields_for(type) do |f| %>
+  <div class="col s4 m4">
+    <div class="card medium hoverable">
+      <div class="card-image">
+        <img class="img-responsive" src="<%= item.img_url %>">
+      </div>
+      <li class="divider"></li>
+      <div class="card-content" style="padding-top:10px; ">
+        <p>Descripcion: <%= item.descripcion %></p>
+        <p>Rendimiento por caja: <%= item.rend_caja %></p>
+        <p>Precio: $<%= number_with_delimiter(item.precio, :delimiter => ',') %></p>
+        <div style="position:absolute; bottom:15px; left:15px; right:15px;">
+          <div style="float:left; width:33%;padding-top:20px;">
+        <button class="btn-floating btn-small scale-transition set_background" data-img_url="<%= item.img_url %>">
+          <i class="material-icons">visibility</i>
+        </button>
+        </div>
+          <div style="float:left; width:33%; text-align:center;padding-top:20px;">
+        <a href="<%= carrito_add_path(item.sku) %>" class="btn-floating btn-small scale-transition shopping_cart">
+          <i class="material-icons">shopping_cart</i>
+        </a>
+      </div>
+      <div style="float:left; width:33%; text-align:right;padding-top:20px;">
+        <button class="btn-floating btn-small scale-transition 3d_rotation rotate_background" data-img_url="<%= item.img_url %>">
+          <i class="material-icons">3d_rotation</i>
+        </button>
+      </div>
+    </div>
+
+        <%= f.hidden_field(:sku, value: item.sku) %>
+        <%= f.hidden_field(:precio, value: item.precio) %>
+        <%= f.hidden_field(:tipo, value: item.tipo) %>
+
+      </div>
+    </div>
+  </div>
+<% end -%>

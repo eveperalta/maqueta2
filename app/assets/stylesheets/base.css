@@ -1,0 +1,381 @@
+/*INDEX*/
+@font-face
+{
+   font-family: "miso";
+   src: url("/assets/miso.eot");
+   src: url("/assets/miso.eot?#amomiso") format("embedded-opentype"),
+        url("/assets/miso.woff") format("woff"),
+        url("/assets/miso.ttf") format("truetype"),
+        url("/assets/miso.svg#IDdelafuente") format("svg");
+}
+body{
+
+}
+p{
+  line-height: 150%;
+  font-family: "miso";
+  font-size: 16px;
+}
+h1 {
+font-family:"miso";
+font-weight: bold;
+font-size: 56px;
+color: #000;
+margin-top: 180px;
+}
+h5{
+  font-family: "miso";
+  font-weight: bold;
+  font-size: 3.0em;
+  color: #fff;
+  margin-top: 80px;
+}
+.btn{
+  background-color: #006BB1;
+}
+
+.back{
+/*  background-image: url("http://pisosymuros.triplea.cl/images/Fondos/piso-02.jpg");
+    background-image: url("http://pisosymuros.triplea.cl/images/Fondos/piso-11.jpg");*/
+    /*background-image: url("http://pisosymuros.triplea.cl/images/Fondos/piso-23.jpg");*/
+  background-size: cover;
+  background-repeat: no-repeat;
+/*  width: 1600px;*/
+  background-position: left;
+/*  height:1024px;*/
+height: 100vh;
+  overflow-x:hidden;
+}
+/*--------------------------espacios---------------*/
+nav{
+  background-color: #EE192C;
+}
+.dropdown-button{
+  margin-right: 20px;
+  background-color: #E10024;
+}
+/*cambiar tamaño del dropdown list*/
+/*.dropown-content{
+  width: 260px !important;
+  margin: 5px !important;
+  padding: 5px !important;
+  color: black !important;
+}*/
+.dropdown-content:active{
+  white-space: nowrap;
+  position: absolute;
+  top: 55px;
+  left: 5px;
+  opacity: 1;
+  display:block;
+  padding-right: 30px;
+
+}
+.car{
+  color: #fff;
+}
+.fondo{
+  /*
+   background-image: url('https://previews.123rf.com/images/lenatru/lenatru1210/lenatru121000012/15890078-Edad-piso-gris-terraza-de-madera-Foto-de-archivo.jpg');
+   */
+/*background-size: cover;*/
+    width: 1920px !important;
+    height:1015px !important;
+/*    height:90vh;
+  */
+      background-image: url("http://pisosymuros.triplea.cl/images/Fondos/piso-23.jpg");
+      background-size: cover;
+    overflow-x:hidden !important;
+    overflow-y:hidden !important;
+    border:1px solid;
+  /*  height: 95.8vh;*/
+
+}
+.brand-logo img{
+  width: 45px;
+  height: 40px;
+  margin-top: 5px;
+}
+.left-sidebar {
+  width: 230px;
+  /*height: 1080px;*/
+  /*top: 60px;
+  bottom: 0;
+  position: absolute;
+  left: 0;*/
+  /*background-color: rgba(0, 0, 0, 0.3);*/
+}
+a {
+  font-size: 14px;
+  color: #fff;
+  text-decoration: none;
+  display: block;
+  transition: all 0.3s ease;
+}
+a:hover  {
+/*font-size:26px;
+transition: all 0.3s ease;*/
+color: #E10024;
+font-weight: bold;
+}
+.card:hover{
+  -webkit-box-shadow: 0px 0px 12px 10px rgba(255, 60, 60, 0.85);
+  -moz-box-shadow: 0px 0px 12px 10px rgba(255, 60, 60, 0.85);
+  box-shadow: 0px 0px 12px 10px rgba(255, 60, 60, 0.85);
+}
+.slick-slide{
+  border:none;
+  outline: none;
+}
+.slick-slide:hover{
+border:none;
+outline: none;
+}
+.slick-slide:active{
+  border:none;
+  outline: none;
+}
+h5:hover {
+font-size: 40px;
+transition: all 0.3s ease;
+color: #E10024;
+}
+.main-container {
+  height: 100%;
+  width: 100%;
+/*  padding-left: 300px;*/
+  padding-right: 2%;
+  position:relative;
+}
+
+.section {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.circle{
+  width: 100%;
+/*  height: 100px;*/
+  margin-top: 20px;
+/*  margin-left: -20px;*/
+}
+#dos{
+margin-left: 25px;
+}
+.segundo{
+  margin-top: 10px;
+}
+.title{
+  /*margin-left: 42px;*/
+  text-align: center;
+  font-size: 18px;
+  font-family: "miso"
+}
+span{
+  font-size: 18px;
+  /*margin-left: -10px;*/
+  font-family: "miso";
+  margin:0 auto;
+}
+.close{
+  float: right;
+}
+/*---------------------------------CARRUSEL-------------*/
+.card{
+  position: absolute;
+  left: 60px;
+/*  top: 15px;*/
+  width: 75%;
+  font-size: 20px;
+  font-family: "miso";
+
+  -webkit-box-shadow: 0px 0px 12px 10px rgba(0,0,0,0.51);
+  -moz-box-shadow: 0px 0px 12px 10px rgba(0,0,0,0.51);
+  box-shadow: 0px 0px 12px 10px rgba(0,0,0,0.51);
+}
+.card-content p{
+  font-size: 18px;
+}
+.card.medium{
+
+/*  height: 450px;*/
+}
+.slick-slider .slick-track, .slick-slider
+{
+/* height: 500px;*/
+}
+.disable_link{
+  pointer-events: none;
+  cursor: default;
+}
+
+.text_link_selected_piso{
+  font-weight: bolder;
+  color: black;
+}
+.text_link_selected_muro{
+  font-weight: bolder;
+  color: black;
+}
+.image_selected_muro
+{
+   -webkit-box-shadow: 0px 0px 12px 10px rgba(255, 60, 60, 0.85);
+    -moz-box-shadow: 0px 0px 12px 10px rgba(255, 60, 60, 0.85);
+    box-shadow: 0px 0px 8px 8px rgba(68, 255, 21, 0.91)
+}
+.image_selected_piso
+{
+   -webkit-box-shadow: 0px 0px 12px 10px rgba(255, 60, 60, 0.85);
+    -moz-box-shadow: 0px 0px 12px 10px rgba(255, 60, 60, 0.85);
+    box-shadow: 0px 0px 8px 8px rgba(68, 255, 21, 0.91)
+}
+input[type="radio"]+label:before{
+  border: none !important;
+  visibility: hidden;
+}
+input[type="radio"]+label:after{
+  border: none !important;
+  visibility: hidden;
+}
+label.like-label{
+  width: 40px !important;
+  height: 40px !important;
+}
+label.like-label > i{
+  margin-left: -35px;
+}
+input[type="radio"]:checked + label > i {
+  color: red;
+}
+.slick-prev:before {
+  font-size: 48px;
+}
+div.slick-slide > div.card{
+  width: 60%;
+}
+span#carrito-bagde{
+  display: inline-block !important;
+  float: none !important;
+  margin-left: 15px !important;
+  line-height: 22px !important;
+  height: 20px !important;
+  background-color: white !important;
+  color: #E10024 !important;
+  border-radius: 14px !important;
+}
+i.carrito-icon{
+  margin-left: -17px;
+  position: absolute;
+}
+/*cambiar color a los botones*/
+.waves-effect{
+  background-color: #006BB1 !important;
+  color: #fff !important;
+}
+.btn-small{
+  background-color: #006BB1 !important;
+}
+
+.seleccione_text_default
+{
+
+  border-style: dotted;
+  border-color:#A4A4A4;
+  margin-top:80px;
+  margin-right:10%;
+  overflow:hidden; width:80%;
+}
+
+.seleccione_text_label
+{
+font-size:36;
+margin-top:100px;
+margin-bottom: 100px;
+text-align: center;
+
+}
+
+.circleCat{
+  width: 100%;
+
+  margin-top: 20px;
+  margin-left: -20px;
+}
+
+
+
+/*LOADING */
+.spinner {
+  margin: 200px auto;
+  width: 90px;
+  height: 90px;
+  position: relative;
+  text-align: center;
+
+  -webkit-animation: sk-rotate 2.0s infinite linear;
+  animation: sk-rotate 2.0s infinite linear;
+}
+
+.dot1, .dot2 {
+  width: 50%;
+  height: 50%;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  background-color: #fff;
+  border-radius: 100%;
+
+  -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+  animation: sk-bounce 2.0s infinite ease-in-out;
+}
+
+.dot2 {
+  top: auto;
+  bottom: 0;
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+@-webkit-keyframes sk-rotate { 100% { -webkit-transform: rotate(360deg) }}
+@keyframes sk-rotate { 100% { transform: rotate(360deg); -webkit-transform: rotate(360deg) }}
+
+@-webkit-keyframes sk-bounce {
+  0%, 100% { -webkit-transform: scale(0.0) }
+  50% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bounce {
+  0%, 100% {
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  } 50% {
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+  }
+}
+/*FIN LOADING*/
+
+.row_textInicial
+{
+
+
+}
+
+.title_cat
+{
+
+  font-size: 1.51em;
+}
+.slick-slider
+{
+/*  height: 700px;*/
+
+}
+
+.slick-carousel
+{
+
+  padding-top:20px;
+}
