@@ -16,6 +16,7 @@ var rotate_degrees = [0, 90];
 
 //dropdown menu
 $( document ).ready(function(){
+  console.log("test");
   $(".dropdown-button").dropdown({
     inDuration: 300,
     outDuration: 225,
