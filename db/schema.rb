@@ -14,6 +14,7 @@
 ActiveRecord::Schema.define(version: 20170727202226) do
 
   create_table "config", force: :cascade do |t|
+    t.string  "nombre_config", null: false
     t.integer "tienda_id"
   end
 
