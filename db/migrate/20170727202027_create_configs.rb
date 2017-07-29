@@ -4,5 +4,7 @@ class CreateConfigs < ActiveRecord::Migration
     	t.string :nombre_config, null: false
     	t.integer :tienda_id, null: true
     end
+
+    Config.create(nombre_config: Config::TIENDA_CONFIG_NAME, tienda_id: nil)
   end
 end
