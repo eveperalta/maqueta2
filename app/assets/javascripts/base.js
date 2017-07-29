@@ -514,6 +514,9 @@ $("#buttonModal4").click(function(e) {
     }).done(function(data, textStatus, jqXHR) {
       console.log(data);
 
+      // Cerrar modal.
+      $('#modal4').modal('close');
+
     }).fail(function(jqXHR, textStatus, errorThrown) {
       var error_json = jqXHR.responseJSON;
       console.log(error_json);
