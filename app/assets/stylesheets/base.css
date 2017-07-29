@@ -379,3 +379,6 @@ text-align: center;
 
   padding-top:20px;
 }
+select.tienda-sel{
+  display: inline;
+}

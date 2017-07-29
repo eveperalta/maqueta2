@@ -1,5 +1,5 @@
 class MainController < ApplicationController
-	around_filter :protect_request, only: [:products_by_category, :carrito_add, :set_background, :carrito_send]
+	around_filter :protect_request, only: [:products_by_category, :carrito_add, :set_background, :carrito_send, :set_tienda]
 	
 	CATEGORIES_TYPES = {
 		muro: 'muro',
@@ -131,6 +131,24 @@ class MainController < ApplicationController
 		end
 	end
 
+	def set_tienda
+		tienda_obj = Tienda.find_by(numero: params[:config][:tienda_id])
+
+		if !tienda_obj.nil?
+			config_obj = Config.getTiendaConfig
+			config_obj.tienda_id = tienda_obj.id
+
+			if config_obj.save
+				render json: {msg: "Tienda ingresada exitosamente", tienda_config: Config.checkTiendaConfig}
+			else
+				render json: {msg: "Hubo un problema en guardar la tienda seleccionada."}, status: :unprocessable_entity
+			end
+
+		else
+			render json: {msg: "La tienda ingresada no existe en la BD."}, status: :unprocessable_entity
+		end
+
+	end
 
 	def protect_request
 		begin

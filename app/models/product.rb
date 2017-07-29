@@ -31,7 +31,7 @@ class Product
   end
 
   def descripcion=(new_descripcion)
-    @descripcion = new_descripcion.strip.split[0...6].join(" ") if new_descripcion.present?
+    @descripcion = new_descripcion.strip.split[0...5].join(" ") if new_descripcion.present?
   end
 
   def rend_caja=(new_rend_caja)
