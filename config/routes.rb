@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     get '/set_background/(:category_type)/(:product_sku)', to: 'main#set_background', as: 'set_background'
     get '/carrito_add/(:product_sku)', to: 'main#carrito_add', as: 'carrito_add'
     post '/carrito_send', to: 'main#carrito_send', as: 'carito_send'
+    post '/set_tienda', to: 'main#set_tienda', as: 'set_tienda'
   end
 
   # Example of regular route:

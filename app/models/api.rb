@@ -80,6 +80,7 @@ class API
 		# A REVISAR:
 		# Cambiar el get_params[:categoria_id] de array a string, en caso de que no se quiera obtener todos los productos de todas las categorias.
 		get_params = {categoria_id: [params[:categoria_id]]}
+		numero_tienda = Config.getNumeroTienda
 
 		# if params[:categoria_id] == :all
 		# 	get_params[:categoria_id] = CATEGORIES
@@ -88,54 +89,58 @@ class API
 		# 	get_params[:categoria_id] = [params[:categoria_id]] if CATEGORIES.include?(params[:categoria_id])
 		# end
 
-		if get_params[:categoria_id].size != 0
-			products = []
-			offset = 0
+		if !numero_tienda.nil?
+			if get_params[:categoria_id].size != 0
+				products = []
+				offset = 0
 
-			# Recorrer el o los codigos de piso.
-			get_params[:categoria_id].each do |categoria_id|
-				# TEMPORAL:
-				# Para traer todos productos, hay que variar cada 10 el offset de la URL hasta no encontrar mas productos.
-				products_api_url = JSON.parse(HTTP.get("http://api-car.azurewebsites.net:80/Categories/CL/#{TIENDA_NUM}/#{categoria_id}?orderBy=2&offset=#{offset}&limit=10").to_s)
+				# Recorrer el o los codigos de piso.
+				get_params[:categoria_id].each do |categoria_id|
+					# TEMPORAL:
+					# Para traer todos productos, hay que variar cada 10 el offset de la URL hasta no encontrar mas productos.
+					products_api_url = JSON.parse(HTTP.get("http://api-car.azurewebsites.net:80/Categories/CL/#{numero_tienda}/#{categoria_id}?orderBy=2&offset=#{offset}&limit=10").to_s)
 
-				# En caso de que la request tenga algun problema en su respuesta.
-				if !products_api_url["products"].nil?
-					products_api_url["products"].each do |product|
-						product_obj = Product.new(
-							nombre: product["name"],
-							sku: product["sku"],
-							img_url: product["multimedia"].first["url"],
-							descripcion: getDescriptionFromApi(product),
-							precio: product["price"]["normal"],
-							tipo: params[:category_type]
-							)
+					# En caso de que la request tenga algun problema en su respuesta.
+					if !products_api_url["products"].nil?
+						products_api_url["products"].each do |product|
+							product_obj = Product.new(
+								nombre: product["name"],
+								sku: product["sku"],
+								img_url: product["multimedia"].first["url"],
+								descripcion: getDescriptionFromApi(product),
+								precio: product["price"]["normal"],
+								tipo: params[:category_type]
+								)
 
-						# Realizar llamado de la ficha tecnica del producto.
-						ficha_api_url = JSON.parse(HTTP.get("http://api-car.azurewebsites.net/Products/CL/#{TIENDA_NUM}/#{product_obj.sku}/Sheet"))
+							# Realizar llamado de la ficha tecnica del producto.
+							ficha_api_url = JSON.parse(HTTP.get("http://api-car.azurewebsites.net/Products/CL/#{numero_tienda}/#{product_obj.sku}/Sheet"))
 
-						if ficha_api_url.kind_of?(Array)
-							# Si el llamado devuelve un array es porque no hubo un problema con el llamado
-							# Se recorre la lista de atributos del producto hasta encontrar el de "rendimiento por caja"
-							ficha_api_url[0]["attributes"].each do |attr|
-								if attr["name"] =~ /rendimiento/i
-									product_obj.rend_caja = attr["value"]
-									break
+							if ficha_api_url.kind_of?(Array)
+								# Si el llamado devuelve un array es porque no hubo un problema con el llamado
+								# Se recorre la lista de atributos del producto hasta encontrar el de "rendimiento por caja"
+								ficha_api_url[0]["attributes"].each do |attr|
+									if attr["name"] =~ /rendimiento/i
+										product_obj.rend_caja = attr["value"]
+										break
+									end
+								end
+							end
+
+
+							# Si el producto cumple las validaciones de la clase, se incluye.
+							if SKUS.include?(product_obj.sku)
+								if product_obj.valid?
+									products << product_obj
 								end
 							end
 						end
+					end # each product
+				end # each categoria_id
 
-
-						# Si el producto cumple las validaciones de la clase, se incluye.
-						if SKUS.include?(product_obj.sku)
-							if product_obj.valid?
-								products << product_obj
-							end
-						end
-					end
-				end # each product
-			end # each categoria_id
-
-			return products
+				return products
+			else
+				return nil
+			end
 		else
 			return nil
 		end
@@ -144,7 +149,8 @@ class API
 
 	def self.getFichaProductoBySku(sku, tipo)
 		if sku.present?
-			ficha_producto_api = JSON.parse(HTTP.get("http://api-car.azurewebsites.net/Products/CL/#{TIENDA_NUM}/#{sku}").to_s)
+			numero_tienda = Config.getNumeroTienda
+			ficha_producto_api = JSON.parse(HTTP.get("http://api-car.azurewebsites.net/Products/CL/#{numero_tienda}/#{sku}").to_s)
 
 			if ficha_producto_api.kind_of?(Array)
 				product_obj = Product.new(

@@ -23,4 +23,8 @@ class Config < ActiveRecord::Base
 	def self.checkTiendaConfig
 		return self.exists?(nombre_config: TIENDA_CONFIG_NAME, tienda_id: nil)
 	end
+
+	def self.getNumeroTienda
+		return getTiendaConfig.tienda.numero if !checkTiendaConfig
+	end
 end

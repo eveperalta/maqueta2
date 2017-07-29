@@ -13,10 +13,10 @@ if (badge_element != null)
   bagde_count = parseInt(badge_element.dataset.count);
 var home_url = null;
 var rotate_degrees = [0, 90];
+var tienda_config = getTiendaConfigValue();
 
 //dropdown menu
 $( document ).ready(function(){
-  console.log("test");
   $(".dropdown-button").dropdown({
     inDuration: 300,
     outDuration: 225,
@@ -56,6 +56,23 @@ $( document ).ready(function(){
 
   });
 
+  $('.tooltipped').tooltip({delay: 50});
+
+  // Inicializar los modal para que se pueda abrir mediante JS.
+  $('#modal2').modal({
+      complete: function() {
+        redirectToHome();
+      }
+    });
+  $('#modal1').modal();
+  $('#modal3').modal({
+    // dismissible: false,
+    complete: function(){
+      checkTiendaConfig();
+    }
+  });
+
+  checkTiendaConfig();
 });
 
 $('a.dropdown-button').on('click', function(e){
@@ -129,6 +146,7 @@ $('a.category-link').on('click', function(e){
 
   }).fail(function(jqXHR, textStatus, errorThrown) {
     error_json = jqXHR.responseJSON;
+    console.log(error_json);
 
   }).always(function(data, textStatus, errorThrown) {
     $('a.category-link').toggleClass('disable_link');
@@ -160,6 +178,37 @@ $('form#carrito_form').on('submit', function(event){
     var error_json = jqXHR.responseJSON;
     console.log(error_json.msg);
   }).always(function(data, textStatus, errorThrown) {
+
+  });
+});
+
+// Envio de formulario de la configuracion de la tienda de Sodimac (cuando la tienda no esta seteada en la app).
+$('form#tienda_form').on('submit', function(event){
+  event.preventDefault();
+  var data = $(event.target).serialize();
+  var button = $(event.target).find('input[type=submit]');
+  var btn_txt = button.val();
+
+  $.ajax({
+    url: event.target.action,
+    data: data,
+    method: event.target.method,
+    beforeSend: function()
+    {
+      button.val("Enviando...");
+    }
+  }).done(function(data, textStatus, jqXHR) {
+    // Actualizar el valor del <meta> de la configuracion de la tienda.
+    setTiendaConfigValue(data.tienda_config);
+    // Cerrar modal.
+    $('#modal3').modal('close');
+
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+    var error_json = jqXHR.responseJSON;
+    console.log(error_json.msg);
+
+  }).always(function(data, textStatus, errorThrown) {
+    button.val(btn_txt);
 
   });
 });
@@ -298,19 +347,38 @@ function redirectToHome()
 
 }
 
-// tool tip activator
-$(document).ready(function(){
-  $('.tooltipped').tooltip({delay: 50});
+function getTiendaConfigValue()
+{
+  var metas = document.getElementsByTagName('meta');
+  for (var i = 0; i < metas.length; i++) {
+    if (metas[i].name === 'tienda_config') {
+      return (metas[i].getAttribute('value') === 'true')
+    }
+  }
+  return true;
+}
 
-  // Inicializar el modal2 para que se pueda abrir mediante JS.
-  $('#modal2').modal(
-    {
-      complete: function() {
-        redirectToHome();
-      }
-    });
-  $('#modal1').modal();
-});
+function setTiendaConfigValue(value)
+{
+  var metas = document.getElementsByTagName('meta');
+  for (var i = 0; i < metas.length; i++) {
+    if (metas[i].name === 'tienda_config') {
+      metas[i].setAttribute('value', value);
+      tienda_config = value;
+      return;
+    }
+  }
+  return;
+}
+
+function checkTiendaConfig()
+{
+  console.log(tienda_config);
+  if (tienda_config) {
+    $('#modal3').modal('open');
+
+  }
+}
 
 // Cerrar el modal1 al presionar el boton X.
 $('button#close-modal1').click(function(e){
