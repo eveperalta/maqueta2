@@ -10,6 +10,7 @@
       </li>
       <li>
         <a class="waves-effect waves-light btn" href="#modal1">Enviar</a>
+        <a class="waves-effect waves-light btn" href="#modal4"">Imprimir</a>
       </li>
   <% end -%>
 </ul>
@@ -38,6 +39,25 @@
   </div>
 </div><!--modal mensaje final el trigger es el boton enviar del modal 1-->
 
+<!-- MODAL el trigger es el boton impresion -->
+<div id="modal4" class="modal">
+  <div class="modal-content">
+    <button class="close" id="close-modal4"><i class="material-icons">close</i></button>
+    <h4>Por favor llene los campos antes de enviar a impresión.</h4>
+    <div class="input-field col s12">
+      <input type="email", class="validate", placeholder="Email", id="imp_email">
+    </div>
+    <div class="input-field col s12">
+      <input type="text", class="validate", placeholder="Nombre", id="imp_nombre">
+    </div>
+    <div class="input-field col s12">
+      <input type="text", class="validate", placeholder="Rut", id="imp_rut" maxlength="12">
+    </div>
+  </div>
+  <div class="modal-footer">
+    <input type="button", id="buttonModal4", class="waves-effect waves-light btn modal-trigger", value="Enviar", data-form-url="<%= impresion_send_path %>">
+  </div>
+</div>
 
 <div class="navbar-fixed "><!--navbar-->
   <nav>

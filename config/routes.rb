@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     get '/carrito_add/(:product_sku)', to: 'main#carrito_add', as: 'carrito_add'
     post '/carrito_send', to: 'main#carrito_send', as: 'carito_send'
     post '/set_tienda', to: 'main#set_tienda', as: 'set_tienda'
+    post '/impresion_send', to: 'main#impresion_send', as: 'impresion_send'
   end
 
   # Example of regular route:
