@@ -177,6 +177,27 @@ class API
 		end
 	end
 
+	def self.sendToImpresion(items, user_data)
+		numero_tienda = Config.getNumeroTienda
+		productos = []
+
+		items.each do |item|
+			# REVISAR LA CANITDAD DE ITEM.
+			productos << {sku: item[:sku], cantidad: 1}
+		end
+
+		# Realiza el request POST.
+		impresion_res = HTTP.post("https://apiapp.pechera.p.azurewebsites.net:443/v1/Cotizacion/CL/#{numero_tienda}", json: {usuario: {email: user_data[:email], nombre: user_data[:nombre], rut: user_data[:rut]}, productos: productos})
+
+		if impresion_res.code == 200
+			# Bien
+			return impresion_res.to_s
+		else
+			# Mal
+			return nil
+		end
+	end
+
 	def self.getDescriptionFromApi(product_api_data)
 		description = nil
 		if product_api_data["name"].present?

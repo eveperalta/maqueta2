@@ -15,5 +15,7 @@
 //= require jquery-migrate-1.3.0.min
 //= require turbolinks
 //= require materialize.min
+//= require validar_rut
+//= require jquery.rut.min
 //= require slick.min
 //= require base

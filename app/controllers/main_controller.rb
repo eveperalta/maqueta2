@@ -147,7 +147,36 @@ class MainController < ApplicationController
 		else
 			render json: {msg: "La tienda ingresada no existe en la BD."}, status: :unprocessable_entity
 		end
+	end
 
+	def impresion_send
+		if !params[:items].nil?
+			if params[:nombre].present?
+				# Verificar el formato del email ingresado.
+				if params[:email] =~ /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/
+					# Veriicar el rut ingresado.
+					if RUT::validar(params[:rut])
+						res = API.sendToImpresion(params[:items], {nombre: params[:nombre], email: params[:email], rut: params[:rut]})
+
+						if !res.nil?
+							# OK.
+							render json: {msg: "Solicitud de impresion enviada exitosamente.", ticket: res}
+						else
+							# Hubo un error al mandar el request de impresion.
+							render json: {msg: "Hubo un problema en mandar la solicitud de impresion."}, status: :unprocessable_entity
+						end
+					else
+						render json: {msg: "Rut invalido."}, status: :unprocessable_entity
+					end
+				else
+					render json: {msg: "Email invalido."}, status: :unprocessable_entity
+				end
+			else
+				render json: {msg: "No hay nombre."}, status: :unprocessable_entity
+			end
+		else
+			render json: {msg: "El carrito de compras esta vacio."}, status: :unprocessable_entity
+		end
 	end
 
 	def protect_request

@@ -59,18 +59,19 @@ $( document ).ready(function(){
   $('.tooltipped').tooltip({delay: 50});
 
   // Inicializar los modal para que se pueda abrir mediante JS.
+  $('#modal1').modal();
   $('#modal2').modal({
       complete: function() {
         redirectToHome();
       }
     });
-  $('#modal1').modal();
   $('#modal3').modal({
     // dismissible: false,
     complete: function(){
       checkTiendaConfig();
     }
   });
+  $('#modal4').modal();
 
   checkTiendaConfig();
 });
@@ -373,16 +374,65 @@ function setTiendaConfigValue(value)
 
 function checkTiendaConfig()
 {
-  console.log(tienda_config);
   if (tienda_config) {
     $('#modal3').modal('open');
 
   }
 }
 
+function validateEmail(email)
+{
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+}
+
+function setValidOrInvalidField(field, valid) 
+{
+  if (valid) {
+    $(field).removeClass('invalid');
+    $(field).addClass('valid');
+  }else{
+    $(field).removeClass('valid');
+    $(field).addClass('invalid');
+  }
+}
+
+// Valida los datos (email, nombre y rut) que se envian a impresion.
+function validateImpresionData(data)
+{
+  var pass = true;
+  // EMAIL
+  if (validateEmail(data.email.value.trim())) {
+    setValidOrInvalidField(data.email, true);
+  }else{
+    setValidOrInvalidField(data.email, false);
+    pass = false;
+  }
+  // NOMBRE
+  if (data.nombre.value.trim().length !== 0) {
+    setValidOrInvalidField(data.nombre, true);
+  }else{
+    setValidOrInvalidField(data.nombre, false);
+    pass = false;
+  }
+  // RUT
+  if (checkRut(data.rut.value)) {
+    setValidOrInvalidField(data.rut, true);
+  }else{
+    setValidOrInvalidField(data.rut, false);
+    pass = false;
+  }
+  return pass;
+}
+
 // Cerrar el modal1 al presionar el boton X.
 $('button#close-modal1').click(function(e){
   $('#modal1').modal('close');
+});
+
+// Cerrar el modal4 (IMPRESION) al presionar el boton X.
+$('button#close-modal4').click(function(e){
+  $('#modal4').modal('close');
 });
 
 // Cerrar el modal2 al presionar el boton X y redirigir al home.
@@ -431,6 +481,55 @@ $("#buttonModal1").click(function(e) {
     });
 
   }
+});
+
+// Evento de click en "Enviar" del modal de impresion.
+$("#buttonModal4").click(function(e) {
+  var btn = $(this);
+  var impresion_data = {
+    email: document.getElementById('imp_email'),
+    nombre: document.getElementById('imp_nombre'),
+    rut: document.getElementById('imp_rut')
+  };
+  var form_element = document.getElementById('carrito_form');
+  var data = $(form_element).serializeArray();
+  var form_url = this.dataset.formUrl;
+
+  if (validateImpresionData(impresion_data)){
+    // Agregar los datos que debe llenar el usuario a los datos del formulario (carrito)
+    // para enviarlos a la impresion
+    data.push({name: 'nombre', value: impresion_data.nombre.value.trim()});
+    data.push({name: 'email', value: impresion_data.email.value.trim()});
+    data.push({name: 'rut', value: impresion_data.rut.value});
+
+    $.ajax({
+      url: form_url,
+      data: data,
+      method: form_element.method,
+      beforeSend: function()
+      {
+        btn.val('Enviando impresion...');
+        btn.prop('disabled', true);
+      }
+    }).done(function(data, textStatus, jqXHR) {
+      console.log(data);
+
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      var error_json = jqXHR.responseJSON;
+      console.log(error_json);
+
+    }).always(function(data, textStatus, errorThrown) {
+      btn.val('Enviar');
+      btn.prop('disabled', false);
+    });
+  }
+
+});
+
+// Formatear el campo del rut al escribir o pegar en el input.
+$("input#imp_rut").rut({
+  formatOn: 'keyup change',
+  validateOn: null // si no se quiere validar, pasar null
 });
 
 // Evento de click en boton 'ver'
