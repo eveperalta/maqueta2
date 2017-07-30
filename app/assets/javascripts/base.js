@@ -72,6 +72,7 @@ $( document ).ready(function(){
     }
   });
   $('#modal4').modal();
+  $('#imp_success_modal').modal();
 
   checkTiendaConfig();
 });
@@ -303,6 +304,22 @@ function addItemToCarrito(carrito_data)
   }
 }
 
+// Remueve todos los productos agregados al carrito de compra y deja en $0 el total.
+function clearCarrito() 
+{
+  var carrito_container = document.getElementById('carrito_container');
+  var total_element = $('li#carrito-precio-total');
+  
+  // Se remueve cada nodo del div#carrito_container
+  while (carrito_container.firstChild) {
+    carrito_container.removeChild(carrito_container.firstChild);
+  }
+
+  // Reinicializar el valor total del carrito.
+  total_element.data('total', 0);  
+  total_element.find('span').html("Total: $ 0");
+}
+
 function resetBadge() {
   bagde_count = 0;
   badge_element.dataset.count = bagde_count;
@@ -440,6 +457,11 @@ $('button#close-modal2').click(function(e){
   $('#modal2').modal('close');
 });
 
+// Cerrar el modal2 al presionar el boton X y redirigir al home.
+$('button#close-imp-success').click(function(e){
+  $('#imp_success_modal').modal('close');
+});
+
 // Evento de click en "Enviar" del primer modal.
 $("#buttonModal1").click(function(e) {
   var email = document.getElementById('email_modal').value;
@@ -516,6 +538,16 @@ $("#buttonModal4").click(function(e) {
 
       // Cerrar modal.
       $('#modal4').modal('close');
+      // Abrir modal con el mensaje de exito al usuario.
+      $('#imp_success_modal').modal('open');
+      // Limpiar los campos de impresion llenados por el usuario.
+      impresion_data.email.value = "";
+      impresion_data.nombre.value = "";
+      impresion_data.rut.value = "";
+      // Reiniciar el carrito de compra.
+      clearCarrito();
+      // Y el badge
+      resetBadge();
 
     }).fail(function(jqXHR, textStatus, errorThrown) {
       var error_json = jqXHR.responseJSON;
