@@ -269,6 +269,13 @@ i.carrito-icon{
   margin-left: -17px;
   position: absolute;
 }
+/*ESTE CAMBIA EL MENU DEL CARRITO!!*/
+#carrito_form{
+  width: auto;
+  margin: 10px;
+  padding: 5px;
+}
+
 /*cambiar color a los botones*/
 .waves-effect{
   background-color: #006BB1 !important;
