@@ -35,7 +35,25 @@ class Product
   end
 
   def rend_caja=(new_rend_caja)
-    @rend_caja = new_rend_caja.strip.split[0...6].join(" ") if new_rend_caja.present?
+    if new_rend_caja.present?
+      m2 = new_rend_caja.scan(/[0-9]+\.[0-9]+/).first
+      m2_val = nil
+
+      if !m2.nil?
+        # Los x.xxxx 
+        m2_val = m2.to_f.round(2)
+      else
+        m2 = new_rend_caja.scan(/[0-9]+/).first
+        if !m2.nil?
+          # Cuando les falta el decimal, ejem 1215 => 1.215
+          m2_val = (m2[0] + "." + m2[1..m2.size - 1]).to_f.round(2)
+        end
+      end
+
+      if !m2_val.nil?
+        @rend_caja = "#{m2_val} m2"
+      end
+    end
   end
 
   def precio=(new_precio)
