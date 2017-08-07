@@ -343,26 +343,8 @@ function updateBagde() {
 
 function redirectToHome()
 {
-
-  home_url ="/";
-/*
-   home_url ="/";
-   var j_selector = "";
-   //IMAGEN DEFAULT PISO
-   hidden_el = document.getElementById('muro_img_url');
-   document.getElementById('muro_img_url').value='http://www.triplea.cl/imagesPisosYmuros/fondo1_muro_default.jpg';
-   j_selector = '#muro_img_url';
-    $(j_selector).click();
-
-    hidden_el = document.getElementById('piso_img_url');
-    document.getElementById('piso_img_url').value=' http://pisosymuros.triplea.cl/images/Fondos/piso-23.jpg';
-    j_selector = '#piso_img_url';
-     $(j_selector).click();
-*/
   if (home_url != null)
     window.location = home_url;
-
-
 }
 
 function getTiendaConfigValue()
@@ -496,6 +478,7 @@ $("#buttonModal1").click(function(e) {
 
     }).fail(function(jqXHR, textStatus, errorThrown) {
       var error_json = jqXHR.responseJSON;
+      home_url = null;
       console.log(error_json);
     }).always(function(data, textStatus, errorThrown) {
       button.val('Enviar');

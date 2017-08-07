@@ -94,7 +94,7 @@ class MainController < ApplicationController
 			    # Enviar el email con el PDF.
 					PdfMailer.pdf_email(params[:email], PDF_TEMP_FILE.to_s).deliver_later
 
-					render json: {msg: "Email enviado a #{params[:email]} con el pdf generado exitosamente.", home_url: root_path}
+					render json: {msg: "Email enviado a #{params[:email]} con el pdf generado exitosamente.", home_url: espacio_path}
 					
 				else
 					render json: {msg: "El formato del email ingresado no es válido."}, status: :unprocessable_entity
