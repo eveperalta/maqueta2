@@ -33,11 +33,11 @@ module Maqueta2
     # }
 
     ActionMailer::Base.smtp_settings = {
-      :port           => ENV['smtp_port'],
-      :address        => ENV['sendgrid_address'],
-      :user_name      => ENV['sendgrid_user_name'],
-      :password       => ENV['sendgrid_pass'],
-      :domain         => ENV['sendgrid_domain'],
+      :port           => ENV["mail_jet_port"],
+      :address        => ENV["mail_jet_address"],
+      :user_name      => ENV["mail_jet_usr_name"],
+      :password       => ENV["mail_jet_pass"],
+      # :domain         => ENV['sendgrid_domain'],
       :authentication => :plain,
       :enable_starttls_auto => true
     }
