@@ -75,9 +75,18 @@ $( document ).ready(function(){
   $('#imp_success_modal').modal();
 
   checkTiendaConfig();
+
+  // Evitar la propagacion del click de un elemento dentro del carrito,
+  // excepto los botones "enviar" e "imprimir".
+  $('ul#dropdown1').on('click', function(event) {
+    if (!(event.target.nodeName === "A" && /btn/.test(event.target.className))) {
+      event.stopPropagation();
+    }
+  });
 });
 
 $('a.dropdown-button').on('click', function(e){
+  e.preventDefault();
   resetBadge();
 });
 
