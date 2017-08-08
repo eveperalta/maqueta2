@@ -289,19 +289,28 @@ function addItemToCarrito(carrito_data)
   if (add_item) {
     // Si no existe el par de productos en el carrito, se agrega.
     carrito_container.append(carrito_data.carrito_item);
-
     // Calcular el precio total de los items del carrito.
-    // Se toma el atributo 'total' y se le suma el precio del par de productos gustado entrante.
-    var total_element = $('li#carrito-precio-total');
-    var precio_total_carrito = total_element.data().total;
-    precio_total_carrito += carrito_data.precio_total_item;
-
-    total_element.data('total', precio_total_carrito);
-    total_element.find('span').html("Total: $ " + numberWithCommas(precio_total_carrito));
-
+    updateTotal();
     // Se actualiza el estado del badge.
     updateBagde();
   }
+}
+
+// Actualiza el precio total de todos los items del carrito.
+function updateTotal() 
+{
+  var carrito_items = $('div#carrito_container').children();
+  var total_element = $('li#carrito-precio-total');
+  var precio_total_carrito = 0;
+
+  for (var i = 0; i < carrito_items.length; i++) {
+    var price_item = parseInt(carrito_items[i].dataset.productPrice);
+    var cantidad_item = parseInt(carrito_items[i].getElementsByClassName('cantidad-item')[0].value);
+    precio_total_carrito += price_item * cantidad_item;
+  }
+
+  total_element.data('total', precio_total_carrito);
+  total_element.find('span').html("Total: $ " + numberWithCommas(precio_total_carrito));
 }
 
 // Remueve todos los productos agregados al carrito de compra y deja en $0 el total.
@@ -423,6 +432,11 @@ function validateImpresionData(data)
   }
   return pass;
 }
+
+// Cada vez que se cambia la cantidad de cada item del carrito, se actualiza su precio total.
+$('div#carrito_container').on('input', 'input.cantidad-item', function(event){
+  updateTotal();
+});
 
 // Cerrar el modal1 al presionar el boton X.
 $('button#close-modal1').click(function(e){

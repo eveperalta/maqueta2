@@ -182,8 +182,24 @@ class API
 		productos = []
 
 		items.each do |item|
-			# REVISAR LA CANITDAD DE ITEM.
-			productos << {sku: item[:sku], cantidad: 1}
+			# Validar los productos (solo cantidad y presencia de sku).
+			product_obj = Product.new(
+				nombre: "--",
+				sku: item[:sku],
+				img_url: '--',
+				descripcion: '--',
+				precio: 0,
+				cantidad: item[:cantidad],
+				tipo: item[:tipo],
+				rend_caja: '1 m2'
+			)
+
+			if product_obj.valid?
+				productos << {sku: product_obj.sku, cantidad: product_obj.cantidad}
+			else
+				# Si alguno de los productos falla, se detiene.
+				return nil
+			end
 		end
 
 		# Realiza el request POST.

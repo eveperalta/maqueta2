@@ -1,9 +1,10 @@
 <% carrito.items.each do |item| %>
   <%= fields_for("items[]", item) do |ff| %>
-    <li data-product-sku="<%= item.sku %>">
+    <li data-product-sku="<%= item.sku %>" data-product-price="<%= item.precio %>">
       <%= ff.hidden_field(:sku, value: item.sku) %>
       <%= ff.hidden_field(:tipo, value: item.tipo) %>
       <p><%= item.tipo.to_s.titleize %> sku: <%= item.sku %> | Precio: $ <%= number_with_delimiter(item.precio, :delimiter => ',') %></p>
+      <%= ff.number_field(:cantidad, value: item.cantidad, min: 1, class: 'cantidad-item') %>
     </li>
   <% end -%>
 <% end -%>

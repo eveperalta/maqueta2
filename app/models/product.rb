@@ -4,12 +4,14 @@ class Product
   extend ActiveModel::Naming
   MAX_WORDS_IN_DESC = 5
 
-  attr_accessor :nombre, :sku, :img_url, :descripcion, :rend_caja, :precio, :tipo, :rotar
+  attr_accessor :nombre, :sku, :img_url, :descripcion, :rend_caja, :precio, :tipo, :rotar, :cantidad
 
   validates_presence_of :nombre, :sku, :img_url, :descripcion, :rend_caja, :precio, :tipo
+  validate :checkCantidad
 
   def initialize(attributes = {})
     @rotar = false
+    @cantidad = 1
     attributes.each do |name, value|
       send("#{name}=", value)
     end
@@ -114,6 +116,16 @@ class Product
       @tipo = :piso
     else
       @tipo = nil
+    end
+  end
+
+  def cantidad=(new_cantidad)
+    @cantidad = new_cantidad.to_i
+  end
+
+  def checkCantidad
+    if self.cantidad < 1
+      self.errors[:cantidad] = "La cantidad no puede ser menor que 0."
     end
   end
 end
