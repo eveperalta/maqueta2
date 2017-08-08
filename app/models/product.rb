@@ -2,6 +2,7 @@ class Product
   include ActiveModel::Validations
   include ActiveModel::Conversion
   extend ActiveModel::Naming
+  MAX_WORDS_IN_DESC = 5
 
   attr_accessor :nombre, :sku, :img_url, :descripcion, :rend_caja, :precio, :tipo, :rotar
 
@@ -31,7 +32,53 @@ class Product
   end
 
   def descripcion=(new_descripcion)
-    @descripcion = new_descripcion.strip.split[0...5].join(" ") if new_descripcion.present?
+    if new_descripcion.present?
+      # Quitar espacios innecesarios de la descripcion entrante.
+      new_descripcion = new_descripcion.strip
+      # descripcion_arr => arreglo que guarda cada palabra que se asignara en la @descripcion.
+      descripcion_arr = []
+
+      # Intentar obtener la parte de las dimensiones en la descripcion entrante.
+      desc_dim = new_descripcion.scan(/[0-9]+\s*x\s*[0-9]+/i).first
+      if !desc_dim.nil?
+        desc_dim = desc_dim.gsub(/\s/, "").downcase
+      else
+        # No se pudo obtener las dimensiones, se intentara armar la descripcion de todas formas.
+        desc_dim = nil
+      end
+
+      pass = false
+      # Separar la descripcion por ' ' y recorrer palabra por palabra.
+      new_descripcion.split.each do |word|
+        # Revisar si hay suficientes palabras en el arreglo descripcion_arr.
+        if descripcion_arr.size != MAX_WORDS_IN_DESC
+          if !desc_dim.nil?
+            # Si la palabra es la dimension (desc_dim), no se agregara al array de palabras descripcion_arr.
+            if desc_dim =~ /#{word}/
+              pass = true
+            else
+              if !pass
+                descripcion_arr << word
+              else
+                # Se agrega la dimension y la palabra actual (deberia ser cm o m2) al descripcion_arr.
+                descripcion_arr << desc_dim
+                descripcion_arr << word
+                # Se hace el cambio para que se agreguen todas las palabras que siguen al array.
+                pass = false
+              end
+            end
+          else
+            # desc_dim = nil
+            descripcion_arr << word
+          end
+        else
+          # Se corta el each ya que hay suficientes palabras en descripcion_arr.
+          break
+        end
+      end
+      
+      @descripcion = descripcion_arr.join(" ") + "."
+    end
   end
 
   def rend_caja=(new_rend_caja)
