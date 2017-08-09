@@ -318,6 +318,9 @@ function updateTotal()
     precio_total_carrito += price_item * cantidad_item;
   }
 
+  if (isNaN(precio_total_carrito))
+    precio_total_carrito = 0;
+
   total_element.data('total', precio_total_carrito);
   total_element.find('span').html("Total: $ " + numberWithCommas(precio_total_carrito));
 }
@@ -443,7 +446,12 @@ function validateImpresionData(data)
 }
 
 // Cada vez que se cambia la cantidad de cada item del carrito, se actualiza su precio total.
-$('div#carrito_container').on('input', 'input.cantidad-item', function(event){
+// Tambien previene que el usuario cambie valores inadecuados del input, los cambia a 1.
+$('div#carrito_container').on('change', 'input.cantidad-item', function(event){
+  var input_val = parseInt($(this).val());
+  if (isNaN(input_val) || input_val < 1) {
+    $(this).val(1);
+  }
   updateTotal();
 });
 

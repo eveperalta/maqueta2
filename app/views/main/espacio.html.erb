@@ -1,8 +1,8 @@
 <!-- Dropdown Structure -->
 <ul id="dropdown1" class="dropdown-content">
   <%= form_for(carrito, url: carito_send_path, html: {id: 'carrito_form', format: :json}) do |f| %>
-      <div id="carrito_container">
-
+      <div id="carrito_container" class="col s12 row">
+        
       </div>
       <li class="divider"></li>
       <li data-total="<%= carrito.total %>" id="carrito-precio-total">
