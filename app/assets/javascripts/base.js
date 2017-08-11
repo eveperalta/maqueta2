@@ -14,6 +14,10 @@ if (badge_element != null)
 var home_url = null;
 var rotate_degrees = [0, 90];
 var tienda_config = getTiendaConfigValue();
+var recurrent_nodes = {
+   num_cajas: document.getElementById('num_cajas')
+}
+var cub_item = null;
 
 //dropdown menu
 $( document ).ready(function(){
@@ -50,6 +54,7 @@ $( document ).ready(function(){
 
   });
 
+  // Boton que levanta el modal para usar el cubicador.
   $('button#muro_rotar').on('click', function(e){
     console.log(this);
     console.log("click hidden rotar muro");
@@ -73,6 +78,14 @@ $( document ).ready(function(){
   });
   $('#modal4').modal();
   $('#imp_success_modal').modal();
+  // Modal del cubicador.
+  $('#modal_cub').modal({
+    // Cada vez que se cierra el modal, se reinicia el formulario del cubicador.
+    complete: function(){
+      clearCubicadorForm();
+      cub_item = null;
+    }
+  });
 
   checkTiendaConfig();
 
@@ -224,32 +237,43 @@ $('form#tienda_form').on('submit', function(event){
   });
 });
 
+// Envio del formulario para usar la API del cubicador.
+$('form#cubicador_form').on('submit', function(event){
+  event.preventDefault();
+  var data = $(event.target).serialize();
+  var button = $(event.target).find('input[type=submit]');
+  var btn_txt = button.val();
+
+  $.ajax({
+    url: event.target.action,
+    data: data,
+    method: event.target.method,
+    beforeSend: function()
+    {
+      button.prop('disabled', true);
+      button.val("Calculando...");
+    }
+  }).done(function(data, textStatus, jqXHR) {
+    // Setear la cantidad de cajas al span.
+    setCantidadCajas(data.cantidad);
+
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+    var error_json = jqXHR.responseJSON;
+    console.log(error_json.msg);
+
+  }).always(function(data, textStatus, errorThrown) {
+    button.prop('disabled', false);
+    button.val(btn_txt);
+  });
+});
+
 // Evento de click en el carrito de cada elemento del carrusel.
 $('div.slick-carousel').on('click', 'a.shopping_cart', function(event){
   event.preventDefault();
   var url = this.href;
   var data = $(this).parents('div.card-content').find('input').serialize();
 
-  $.ajax({
-    url: url,
-    data: data,
-    method: 'get',
-    beforeSend: function()
-    {
-    }
-  }).done(function(data, textStatus, jqXHR) {
-    // Aqui se debe agregar el par de productos gustados al carrito.
-    console.log(data);
-
-    addItemToCarrito(data);
-
-  }).fail(function(jqXHR, textStatus, errorThrown) {
-    var error_json = jqXHR.responseJSON;
-    console.log(error_json.msg);
-  }).always(function(data, textStatus, errorThrown) {
-
-  });
-
+  sendToCarritoAjax(data, url);
 });
 
 
@@ -276,8 +300,57 @@ $('div.slick-carousel').on('click', 'a.set_background', function(event){
 
 });
 
+$('button#send_carrito_cub').on('click', function(event){
+  if (cub_item !== null) {
+    var data = cub_item.serializeArray();
+    var href = this.dataset.carritoUrl + "/";
+
+    for (var i = 0; i < data.length; i++) {
+      if (/cantidad/i.test(data[i].name)) {
+        data[i].value = recurrent_nodes.num_cajas.dataset.numCajas;
+      }
+      if (/sku/i.test(data[i].name)) {
+        href += data[i].value;
+      }
+    }
+
+    // Enviar el item con la cantidad cambiada al carrito.
+    sendToCarritoAjax(data, href);
+    // Cerrar el modal del cubicador.
+    $('#modal_cub').modal('close');
+
+  }else{
+    console.error("No se tiene guardado el item para agregar al carrito, cub_item === null");
+  }
+});
+
 function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// Realiza el llamado AJAX para enviar el producto (item) al carrito.
+// Se dejo como funcion ya que el cubicador y el icono de carrito del producto lo usan.
+function sendToCarritoAjax(data, url)
+{
+  $.ajax({
+    url: url,
+    data: data,
+    method: 'get',
+    beforeSend: function()
+    {
+    }
+  }).done(function(data, textStatus, jqXHR) {
+    // Aqui se debe agregar el par de productos gustados al carrito.
+    console.log(data);
+
+    addItemToCarrito(data);
+
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+    var error_json = jqXHR.responseJSON;
+    console.log(error_json.msg);
+  }).always(function(data, textStatus, errorThrown) {
+
+  });
 }
 
 // Funcion que revisa si existe un par de productos gustados en el carrito antes de agregar un nuevo par para evitar duplicados.
@@ -302,6 +375,38 @@ function addItemToCarrito(carrito_data)
     updateTotal();
     // Se actualiza el estado del badge.
     updateBagde();
+  }
+}
+
+// Resetear los valores por defecto de los inputs del formulario del cubicador.
+function clearCubicadorForm()
+{
+  var fields = $('form#cubicador_form > input.cubicador_field');
+  for (var i = 0; i < fields.length; i++) {
+    if (/m2/i.test(fields[i].name)) {
+      fields[i].value = 1;
+    }else{
+      fields[i].value = null;
+    }
+  }
+  // Resetear el atributo de cantidad de cajas.
+  setCantidadCajas(0);
+}
+
+// Dado la cantidad de cajas se asigna este valor al span y a su data-cantidad-cajas.
+// Tambien verifica si tiene que habilitar el boton de enviar al carrito dentro del modal.
+function setCantidadCajas(cantidad) 
+{
+  var btn = $('button#send_carrito_cub');
+  // Setear el texto del span y el dataset con la cantidad de cajas.
+  recurrent_nodes.num_cajas.innerHTML = cantidad;
+  recurrent_nodes.num_cajas.dataset.numCajas = cantidad;
+
+  // Revisar si habilitar o no el boton de enviar al carrito del modal del cubicador.
+  if (cantidad > 0) {
+    btn.prop('disabled', false);
+  }else{
+    btn.prop('disabled', true);
   }
 }
 
@@ -455,6 +560,14 @@ $('div#carrito_container').on('change', 'input.cantidad-item', function(event){
   updateTotal();
 });
 
+// Validar que el usuario cambie la cantidad de m2 del cubicador con valores inadecuados, los cambia a 1.
+$('form#cubicador_form').on('change', 'input.m2_cub', function(event){
+  var input_val = parseFloat($(this).val());
+  if (isNaN(input_val) || input_val < 1) {
+    $(this).val(1);
+  }
+});
+
 // Cerrar el modal1 al presionar el boton X.
 $('button#close-modal1').click(function(e){
   $('#modal1').modal('close');
@@ -474,6 +587,12 @@ $('button#close-modal2').click(function(e){
 $('button#close-imp-success').click(function(e){
   $('#imp_success_modal').modal('close');
 });
+
+// Cerrar el modal del cubicador al presionar el boton X.
+$('button#close-modal-cub').click(function(e){
+  $('#modal_cub').modal('close');
+});
+
 
 // Evento de click en "Enviar" del primer modal.
 $("#buttonModal1").click(function(e) {
@@ -619,8 +738,6 @@ $('div.slick-carousel').on('click', 'button.set_background', function(event){
 
 
 $('div.slick-carousel').on('click', 'div.card-image', function(event){
-
-
  var carousel_container = $(this).parents('div.slick-carousel').attr('id');
  var img_url =$(this).children('img').attr('src');
  var hidden_el = null;
@@ -652,46 +769,54 @@ $('div.slick-carousel').on('click', 'div.card-image', function(event){
    // Disparar el evento de click en el boton.
    $(j_selector).click();
  }
-
-
 });
 
-// Evento de click en boton 'rotar'
+// Evento de click en boton 'm2' del producto. Asigna los valores de los input hidden del producto (sku, piso, superficie)
+// para asignarlo a los input hidden del formulario del cubicador, luego de esto, se levanta el modal.
 $('div.slick-carousel').on('click', 'button.rotate_background', function(event){
+  // Guardar los input del producto clickeado.
+  cub_item = $(this).parents('div.card-content').find('input');
+  // Valores de los input hidden (sku, precio y tipo) de item del carrusel.
+  var hidden_vals = cub_item.serializeArray();
+  var data = {sku: null, piso: null, superficie: null};
 
-/*  var j_selector ="#muro_img_url";
-  alert("asdf");
-var j_selector1= "#muro_img_url";
-alert($(j_selector1).val());
-$(j_selector1).click();*/
-  var carousel_container = $(this).parents('div.slick-carousel').attr('id');
-  var hidden_el = null;
-  var j_selector = "";
+  for (var i = 0; i < hidden_vals.length; i++) {
+    var tmp_value = hidden_vals[i].value.length === 0 ? null : hidden_vals[i].value;
+    // Obtener el valor del sku
+    if (/sku/i.test(hidden_vals[i].name))
+      data.sku = tmp_value;
 
-  if (carousel_container === 'muros_carousel') {
-    // Setear los valores de los input hidden de muros.
-    hidden_el = document.getElementById('muro_rotar');
-    j_selector = '#muro_rotar';
+    if (/categoria/i.test(hidden_vals[i].name))
+      data.piso = tmp_value;
 
-  }else if(carousel_container === 'pisos_carousel'){
-    // Setear los valores de los input hidden de pisos.
-    hidden_el = document.getElementById('piso_rotar');
-    j_selector = '#piso_rotar';
-
+    if (/superficie/i.test(hidden_vals[i].name))
+      data.superficie = tmp_value;
   }
 
-  if (hidden_el !== null) {
-     // Disparar el evento de click en el boton.
-    $(j_selector).click();
-
-    setRotateDegrees(hidden_el);
+  if (data.sku !== null && data.piso !== null && data.superficie !== null) {
+    var cub_hiddens = $('form#cubicador_form').find('input');
+    // Se asignan los valores de los input hidden del formulario del cubicador con 
+    // el producto del carrusel clickeado.
+    for (var i = 0; i < cub_hiddens.length; i++) {
+      // SKU.
+      if (/sku/i.test(cub_hiddens[i].name))
+        cub_hiddens[i].value = data.sku;
+      // PISO
+      if (/piso/i.test(cub_hiddens[i].name))
+        cub_hiddens[i].value = data.piso;
+      // SUPERFICIE
+      if (/superficie/i.test(cub_hiddens[i].name))
+        cub_hiddens[i].value = data.superficie;
+    }
+    // Levantar el modal del cubicador.
+    $('#modal_cub').modal('open');
   }
-
 });
 
 // Funcion para setear el valor de rotacion para los input hidden.
 // input: nodo input hidden del valor de la rotacion.
-function setRotateDegrees(input){
+function setRotateDegrees(input)
+{
   var degrees = input.value;
   var new_degrees = null;
   var index = rotate_degrees.indexOf(parseInt(degrees));
@@ -708,25 +833,11 @@ function setRotateDegrees(input){
   input.value = new_degrees;
 }
 
-/*$("#fondoInicial").load(function() {
-  $("#loading_app_inicial").fadeOut(300);
-  setTimeout(function() {
-        $("#fondoInicial").fadeIn(1000);
-        setTimeout(function() {
-            $("#content_pantalla_inicio").fadeIn(1400);
-        },1000);
-
-    }, 600);
-
-});*/
-
-
 $('#autorenew_bottom').on('click', function(){
-$('.fondo').fadeOut(300);
-$("#loading_app").fadeIn();
-$('#goHome_App').click();
-    redirectToHome();
-
+  $('.fondo').fadeOut(300);
+  $("#loading_app").fadeIn();
+  $('#goHome_App').click();
+      redirectToHome();
 });
 
 

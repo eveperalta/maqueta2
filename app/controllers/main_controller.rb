@@ -21,7 +21,7 @@ class MainController < ApplicationController
 	def products_by_category
 		if params[:category_type].present?
 			if params[:category_id].present?
-				items = API.getProductsByCategory(categoria_id: params[:category_id], category_type: params[:category_type])
+				items = API.getProductsByCategory(categoria_id: params[:category_id], category_type: params[:category_type], category_name: params[:category_name])
 
 				if !items.nil?
 					html_item_arr = []
@@ -176,6 +176,16 @@ class MainController < ApplicationController
 			end
 		else
 			render json: {msg: "El carrito de compras esta vacio."}, status: :unprocessable_entity
+		end
+	end
+
+	def cubicador_send
+		res = API.sendToCubicador(params[:cubicador])
+		if !res.nil?
+			# OK.
+			render json: {msg: "Solicitud del cubicador realizada exitosamente.", cantidad: res}
+		else
+			render json: {msg: "Hubo un problema con el cubicador."}, status: :unprocessable_entity
 		end
 	end
 

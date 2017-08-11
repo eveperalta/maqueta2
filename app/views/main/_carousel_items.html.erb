@@ -12,26 +12,29 @@
         <p>SKU: <%= item.sku %></p>
         <div style="position:absolute; bottom:15px; left:15px; right:15px;">
           <div style="float:left; width:33%;padding-top:20px;">
-        <button class="btn-floating btn-small scale-transition set_background" data-img_url="<%= item.img_url %>">
-          <i class="material-icons">visibility</i>
-        </button>
-        </div>
+            <button class="btn-floating btn-small scale-transition set_background" data-img_url="<%= item.img_url %>">
+              <i class="material-icons">visibility</i>
+            </button>
+          </div>
           <div style="float:left; width:33%; text-align:center;padding-top:20px;">
-        <a href="<%= carrito_add_path(item.sku) %>" class="btn-floating btn-small scale-transition shopping_cart">
-          <i class="material-icons">shopping_cart</i>
-        </a>
-      </div>
-      <div style="float:left; width:33%; text-align:right;padding-top:20px;">
-        <button class="btn-floating btn-small scale-transition 3d_rotation rotate_background" data-img_url="<%= item.img_url %>">
-          <i class="material-icons">select_all</i><!--cambie este icono -->
-        </button>
-      </div>
-    </div>
-
+            <a href="<%= carrito_add_path(item.sku) %>" class="btn-floating btn-small scale-transition shopping_cart">
+              <i class="material-icons">shopping_cart</i>
+            </a>
+          </div>
+          <% if item.tipo == :piso %>
+            <div style="float:left; width:33%; text-align:right;padding-top:20px;">
+              <button class="btn-floating btn-small scale-transition 3d_rotation rotate_background" data-img_url="<%= item.img_url %>">
+                <i class="material-icons">select_all</i><!--cambie este icono -->
+              </button>
+            </div>
+          <% end -%>
+        </div>
         <%= f.hidden_field(:sku, value: item.sku) %>
         <%= f.hidden_field(:precio, value: item.precio) %>
         <%= f.hidden_field(:tipo, value: item.tipo) %>
-
+        <%= f.hidden_field(:cantidad, value: item.cantidad) %>
+        <%= f.hidden_field(:categoria, value: item.categoria) %>
+        <%= f.hidden_field(:superficie, value: item.superficie) %>
       </div>
     </div>
   </div>

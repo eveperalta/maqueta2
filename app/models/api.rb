@@ -75,6 +75,7 @@ class API
 	]
 
 	TIENDA_NUM = 96
+	CUB_AUTH = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxNTA5NiIsIm5hbWUiOiJTb2RpbWFjIiwiYWRtaW4iOnRydWV9.7VC7h-JaOIE1s70MsFjheZcZNox8LjpwdwcERoge6kw'
 
 	def self.getProductsByCategory(params)
 		# A REVISAR:
@@ -109,7 +110,8 @@ class API
 								img_url: product["multimedia"].first["url"],
 								descripcion: getDescriptionFromApi(product),
 								precio: product["price"]["normal"],
-								tipo: params[:category_type]
+								tipo: params[:category_type],
+								categoria: params[:category_name]
 								)
 
 							# Realizar llamado de la ficha tecnica del producto.
@@ -205,6 +207,7 @@ class API
 		# Realiza el request POST.
 		impresion_res = HTTP.post("https://apiapp.pechera.p.azurewebsites.net:443/v1/Cotizacion/CL/#{numero_tienda}", json: {usuario: {email: user_data[:email], nombre: user_data[:nombre], rut: user_data[:rut]}, productos: productos})
 
+
 		if impresion_res.code == 200
 			# Bien
 			return impresion_res.to_s
@@ -212,6 +215,19 @@ class API
 			# Mal
 			return nil
 		end
+	end
+
+	def self.sendToCubicador(data)
+		cub_res = HTTP.auth(CUB_AUTH).post("http://apisos.ubq.cl/materiales/", json: {piso: data[:piso], superficie: data[:superficie], m2: data[:m2].to_f, sku: data[:sku]})
+
+		if cub_res.code == 200
+			# Todo ok, solo se devuelve la cantidad de cajas.
+			return JSON.parse(cub_res.to_s)["piso"]["cantidad"]
+		else
+			# Mal.
+			return nil
+		end
+		
 	end
 
 	def self.getDescriptionFromApi(product_api_data)

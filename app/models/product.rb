@@ -4,7 +4,7 @@ class Product
   extend ActiveModel::Naming
   MAX_WORDS_IN_DESC = 5
 
-  attr_accessor :nombre, :sku, :img_url, :descripcion, :rend_caja, :precio, :tipo, :rotar, :cantidad
+  attr_accessor :nombre, :sku, :img_url, :descripcion, :rend_caja, :precio, :tipo, :rotar, :cantidad, :categoria, :superficie
 
   validates_presence_of :nombre, :sku, :img_url, :descripcion, :rend_caja, :precio, :tipo
   validate :checkCantidad
@@ -12,6 +12,7 @@ class Product
   def initialize(attributes = {})
     @rotar = false
     @cantidad = 1
+    @superficie = 'concreto' # temporal, solo se usa para la api de cubicador.
     attributes.each do |name, value|
       send("#{name}=", value)
     end
