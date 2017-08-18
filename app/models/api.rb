@@ -83,61 +83,73 @@ class API
 		get_params = {categoria_id: [params[:categoria_id]]}
 		numero_tienda = Config.getNumeroTienda
 
-		# if params[:categoria_id] == :all
-		# 	get_params[:categoria_id] = CATEGORIES
-		# else
-		# 	# Se entrega un unico categoria_id, se busca en el array de categorias.
-		# 	get_params[:categoria_id] = [params[:categoria_id]] if CATEGORIES.include?(params[:categoria_id])
-		# end
-
 		if !numero_tienda.nil?
 			if get_params[:categoria_id].size != 0
 				products = []
+				products_failed = []
 				offset = 0
+				# Traer cada (limit) productos.
+				limit = 100
 
 				# Recorrer el o los codigos de piso.
 				get_params[:categoria_id].each do |categoria_id|
-					# TEMPORAL:
-					# Para traer todos productos, hay que variar cada 10 el offset de la URL hasta no encontrar mas productos.
-					products_api_url = JSON.parse(HTTP.get("http://api-car.azurewebsites.net:80/Categories/CL/#{numero_tienda}/#{categoria_id}?orderBy=2&offset=#{offset}&limit=10").to_s)
+					pass = true
+					# Para traer todos productos, hay que variar cada (limit) el offset de la URL hasta encontrar menos productos que el (limit).
+					while pass
+						products_api_url = JSON.parse(HTTP.get("http://api-car.azurewebsites.net:80/Categories/CL/#{numero_tienda}/#{categoria_id}?orderBy=2&%24offset=#{offset}&%24limit=#{limit}").to_s)
 
-					# En caso de que la request tenga algun problema en su respuesta.
-					if !products_api_url["products"].nil?
-						products_api_url["products"].each do |product|
-							product_obj = Product.new(
-								nombre: product["name"],
-								sku: product["sku"],
-								img_url: product["multimedia"].first["url"],
-								descripcion: getDescriptionFromApi(product),
-								precio: product["price"]["normal"],
-								tipo: params[:category_type],
-								categoria: params[:category_name]
-								)
+						# puts "OFFSET -> #{offset} | PRODUCTOS -> #{products_api_url["products"].size}"
+						if products_api_url["products"].size != 0
+							products_api_url["products"].each do |product|
+								product_obj = Product.new(
+									nombre: product["name"],
+									sku: product["sku"],
+									img_url: product["multimedia"].first["url"],
+									descripcion: getDescriptionFromApi(product),
+									precio: product["price"]["normal"],
+									tipo: params[:category_type],
+									categoria: params[:category_name]
+									)
+								# Realizar llamado de la ficha tecnica del producto.
+								ficha_api_url = JSON.parse(HTTP.get("http://api-car.azurewebsites.net/Products/CL/#{numero_tienda}/#{product_obj.sku}/Sheet"))
 
-							# Realizar llamado de la ficha tecnica del producto.
-							ficha_api_url = JSON.parse(HTTP.get("http://api-car.azurewebsites.net/Products/CL/#{numero_tienda}/#{product_obj.sku}/Sheet"))
-
-							if ficha_api_url.kind_of?(Array)
-								# Si el llamado devuelve un array es porque no hubo un problema con el llamado
-								# Se recorre la lista de atributos del producto hasta encontrar el de "rendimiento por caja"
-								ficha_api_url[0]["attributes"].each do |attr|
-									if attr["name"] =~ /rendimiento/i
-										product_obj.rend_caja = attr["value"]
-										break
+								if ficha_api_url.kind_of?(Array)
+									# Si el llamado devuelve un array es porque no hubo un problema con el llamado
+									# Se recorre la lista de atributos del producto hasta encontrar el de "rendimiento por caja"
+									ficha_api_url[0]["attributes"].each do |attr|
+										if attr["name"] =~ /rendimiento/i
+											product_obj.rend_caja = attr["value"]
+											break
+										end
 									end
 								end
-							end
 
-
-							# Si el producto cumple las validaciones de la clase, se incluye.
-							if SKUS.include?(product_obj.sku)
+								# Si el producto cumple las validaciones de la clase, se incluye.
 								if product_obj.valid?
 									products << product_obj
+								else
+									products_failed << product_obj
 								end
+							end # each product
+
+							# Si aun quedan productos por traer (si la cantidad de productos obtenidos es el limit),
+							# se le suma "limit" al "offset" y se vuelva a usar la api.
+							if products_api_url["products"].size == limit
+								offset += limit
+							else
+								# No deberian quedar mas productos debido que la cantidad de productos obtenidos es menor que el limit.
+								pass = false
 							end
-						end
-					end # each product
+
+						else
+							# No se encontraron productos.
+							pass = false
+						end # products_api_url["products"].size != 0
+					end # while(pass)
 				end # each categoria_id
+
+				# puts "FINAL #{products.size} productos"
+				# puts "FALLARON #{products_failed.size} productos"
 
 				return products
 			else
