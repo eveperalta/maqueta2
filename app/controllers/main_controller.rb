@@ -15,7 +15,7 @@ class MainController < ApplicationController
 		carrito = Carrito.new
 		# carrito.items << ProductPair.new(piso: Product.new(sku: "1"), muro: Product.new(sku: "2"))
 		# carrito.items << ProductPair.new(piso: Product.new(sku: "3"), muro: Product.new(sku: "4"))
-		render action: :espacio, locals: {categories_types: CATEGORIES_TYPES, carrito: carrito}
+		render action: :espacio, locals: {categories_types: CATEGORIES_TYPES, carrito: carrito, categories: Category.all}
 	end
 
 	def products_by_category

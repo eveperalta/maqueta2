@@ -173,122 +173,53 @@
                 </div>
             </div>--> 
 
-
     <div class="" style="min-height:50%; position:relative;overflow:hidden;">
-
       <div  style="float:left;width:230px;  position:absolute; top:0; bottom:0; background-color: rgba(0, 0, 0, 0.3); padding-left:10px;">
         <h5 style="margin-top:10px; ">Muros</h5>
-      <!-- MUROS -->
-      <div class="row" style="margin-bottom:0px;">
-        <div class="col s6 m6 l6">
-          <%= link_to(products_by_category_path(categories_types[:muro], 'cat4850117'), class: 'category-link') do %>
-            <%= image_tag('ceramicaMarmol.jpg', class: 'circle hoverable ', alt: 'Elegir Papel') %>
-            <span class="title_cat">Ceramica<br/>Marmolada</span>
+        <!-- MUROS -->
+        <div class="row" style="margin-bottom:0px;">
+          <% categories.each do |cat| %>
+            <% if cat.tipo == categories_types[:muro] %>
+              <div class="col s6 m6 l6">
+                <%= link_to(products_by_category_path(cat.tipo, cat.sodimac_id), class: 'category-link') do %>
+                  <%= image_tag(cat.img, class: 'circle hoverable ', alt: cat.alt_txt) %>
+                  <span class="title_cat"><%= cat.nombre %></span>
+                <% end -%>
+              </div>
+            <% end -%>
           <% end -%>
         </div>
-      <div class="col s6 m6 l6 ">
-          <%= link_to(products_by_category_path(categories_types[:muro], 'cat4850116'), class: 'category-link') do %>
-            <%= image_tag('muros.jpg', class: 'circle hoverable', id: '', alt: 'Elegir Cerámicas') %>
-            <span class="title title_cat">Ceramica<br/>Lisa</span>
-          <% end -%>
-        </div>
-      </div><!--row-->
-      <div class="row" style="margin-bottom:0px;">
-        <div class="col s6 m6 l6 ">
-          <%= link_to(products_by_category_path(categories_types[:muro], 'scat991120'), class: 'category-link') do %>
-            <%= image_tag('porcelanato.jpg', class: 'circle hoverable', id: '', alt: 'Elegir Porcelanato') %>
-            <span class="title title_cat">Porcelanato</span>
-          <% end -%>
-        </div>
-
-        <div class="col s6 m6 l6 ">
-          <%= link_to(products_by_category_path(categories_types[:muro], 'scat358517'), class: 'category-link') do %>
-            <%= image_tag('papel.jpg', class: 'circle hoverable', id: '', alt: 'Elegir Porcelanato') %>
-            <span class="title title_cat">Papel Mural</span>
-          <% end -%>
-        </div>
-
-        <!--  <div class="col s6 m6 l6 segundo">
-          <%= link_to(products_by_category_path(categories_types[:muro], 'scat963904'), class: 'category-link') do %>
-            <%= image_tag('living2.jpg', class: 'circle hoverable', alt: 'Elegir Pintura') %>
-            <span>Pintura</span>
-          <% end -%>
-        </div>
-        <div class="col s6 m6 l6 segundo">
-          <%= link_to(products_by_category_path(categories_types[:muro], 'scat963248'), class: 'category-link') do %>
-            <%= image_tag('foto.jpg', class: 'circle hoverable', id: '', alt: 'Elegir Decomural') %>
-            <span class="title">Decomural</span>
-          <% end -%>
-        </div>-->
       </div>
 
-    </div>
-
       <div style="width:87%;float:right;  padding-left:30px; padding-right:30px;  overflow:hidden;">
-
-
-        <div  class="slick-carousel" style="margin-left:30px;" id="muros_carousel">
-        </div>
+        <div  class="slick-carousel" style="margin-left:30px;" id="muros_carousel"></div>
         <br/>
+      </div>
     </div>
+    <!-- CARRUSEL MUROS-->
 
-    </div>
-
-      <!-- CARRUSEL MUROS-->
-
-      <!-- CARRUSEL PISOS -->
-
-      <div class="" style="width:100%; min-height:50%; position:relative;overflow:hidden;">
-              <div  style="width:230px;float:left;position:absolute; top:0; bottom:0; overflow:hidden; background-color: rgba(0, 0, 0, 0.3); padding-left:10px;">
-              <h5 style="margin-top:10px;">Pisos</h5>
-
-              <div class="row" style="margin-bottom:0px;">
-                <!--<div class="col s6 m6 l6">
-                  <%= link_to(products_by_category_path(categories_types[:piso], 'scat102690'), class: 'category-link') do %>
-                    <%= image_tag('http://www.triplea.cl/imagesPisosYmuros/ImagenesAplicativo/ceramica.jpg', class: 'circle hoverable', alt: 'Elegir Cerámica') %>
-                    <span class="title_cat">ceramica</span>
-                  <% end -%>
-                </div>-->
-                <div class="col s6 m6 l6">
-                  <%= link_to(products_by_category_path(categories_types[:piso], 'scat552404', 'piso_flotante'), class: 'category-link') do %>
-                    <%= image_tag('flotante.png', class: 'circle hoverable', id: '', alt: 'Elegir Flotante') %>
-                    <span class="title title_cat">Flotante</span>
-                  <% end -%>
-                </div>
-                <div class="col s6 m6 l6 ">
-                  <%= link_to(products_by_category_path(categories_types[:piso], 'scat552357', 'piso_madera'), class: 'category-link') do %>
-                    <%= image_tag('madera.jpg', class: 'circle hoverable', alt: 'Elegir Madera') %>
-                    <span class="title_cat">Madera</span>
-                  <% end -%>
-                </div>
-              </div><!--row-->
-              <div class="row" style="margin-bottom:0px;">
-
-                <div class="col s6 m6 l6 ">
-                  <%= link_to(products_by_category_path(categories_types[:piso], 'scat991120', 'porcelanato'), class: 'category-link') do %>
-                    <%= image_tag('porcelanato.jpg', class: 'circle hoverable', id: '', alt: 'Elegir Porcelanato') %>
-                    <span class="title title_cat">Porcelanato</span>
-                  <% end -%>
-                </div>
-                <div class="col s6 m6 l6 ">
-                  <%= link_to(products_by_category_path(categories_types[:piso], 'cat2880013', 'vinilico'), class: 'category-link') do %>
-                    <%= image_tag('vinilico.jpg', class: 'circle hoverable', alt: 'Elegir Vinilico') %>
-                    <span class="title_cat">Vinilico</span>
-                  <% end -%>
-                </div>
+    <!-- CARRUSEL PISOS -->
+    <div class="" style="width:100%; min-height:50%; position:relative;overflow:hidden;">
+      <div  style="width:230px;float:left;position:absolute; top:0; bottom:0; overflow:hidden; background-color: rgba(0, 0, 0, 0.3); padding-left:10px;">
+        <h5 style="margin-top:10px;">Pisos</h5>
+        <div class="row" style="margin-bottom:0px;">
+          <% categories.each do |cat| %>
+            <% if cat.tipo == categories_types[:piso] %>
+              <div class="col s6 m6 l6">
+                <%= link_to(products_by_category_path(cat.tipo, cat.sodimac_id), class: 'category-link') do %>
+                  <%= image_tag(cat.img, class: 'circle hoverable ', alt: cat.alt_txt) %>
+                  <span class="title_cat"><%= cat.nombre %></span>
+                <% end -%>
               </div>
-              </div>
-              <div style="width:87%;float:right;  height:auto;  padding-left:30px; padding-right:30px; overflow:hidden;position:relative;">
-
-
-              <div class="slick-carousel" style="margin-left:30px;" id="pisos_carousel">
-              </div>
-            </div>
-          </div>
-
-        <div class="">
+            <% end -%>
+          <% end -%>
+        </div>
+        <div style="width:87%;float:right;  height:auto;  padding-left:30px; padding-right:30px; overflow:hidden;position:relative;">
+          <div class="slick-carousel" style="margin-left:30px;" id="pisos_carousel"></div>
+        </div>
+      </div>
       <!--CARRUSEL PISOS -->
-  </div><!--main container -->
+    </div><!--main container -->
 </div><!--fondo-->
 
 <footer></footer>

@@ -11,7 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170727202226) do
+ActiveRecord::Schema.define(version: 20170818001333) do
+
+  create_table "categories", force: :cascade do |t|
+    t.string "sodimac_id", null: false
+    t.string "nombre",     null: false
+    t.string "tipo",       null: false
+    t.string "img",        null: false
+    t.string "alt_txt",    null: false
+  end
 
   create_table "config", force: :cascade do |t|
     t.string  "nombre_config", null: false
