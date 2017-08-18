@@ -96,6 +96,7 @@ class API
 					pass = true
 					# Para traer todos productos, hay que variar cada (limit) el offset de la URL hasta encontrar menos productos que el (limit).
 					while pass
+
 						products_api_url = JSON.parse(HTTP.get("http://api-car.azurewebsites.net:80/Categories/CL/#{numero_tienda}/#{categoria_id}?orderBy=2&%24offset=#{offset}&%24limit=#{limit}").to_s)
 
 						# puts "OFFSET -> #{offset} | PRODUCTOS -> #{products_api_url["products"].size}"
@@ -130,6 +131,11 @@ class API
 								else
 									products_failed << product_obj
 								end
+								# TEMPORAL QUITAR ESTO
+								if products.size >= 12
+									pass = false
+									break
+								end
 							end # each product
 
 							# Si aun quedan productos por traer (si la cantidad de productos obtenidos es el limit),
@@ -140,6 +146,8 @@ class API
 								# No deberian quedar mas productos debido que la cantidad de productos obtenidos es menor que el limit.
 								pass = false
 							end
+
+
 
 						else
 							# No se encontraron productos.
