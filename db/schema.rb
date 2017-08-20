@@ -11,19 +11,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170818001333) do
+ActiveRecord::Schema.define(version: 20170818155011) do
 
   create_table "categories", force: :cascade do |t|
-    t.string "sodimac_id", null: false
-    t.string "nombre",     null: false
-    t.string "tipo",       null: false
-    t.string "img",        null: false
-    t.string "alt_txt",    null: false
+    t.string   "sodimac_id",    null: false
+    t.string   "nombre",        null: false
+    t.string   "tipo",          null: false
+    t.string   "img",           null: false
+    t.string   "alt_txt",       null: false
+    t.datetime "last_api_used"
   end
 
   create_table "config", force: :cascade do |t|
     t.string  "nombre_config", null: false
     t.integer "tienda_id"
+  end
+
+  create_table "product", force: :cascade do |t|
+    t.string  "nombre",                       null: false
+    t.string  "sku",                          null: false
+    t.string  "img_url",                      null: false
+    t.string  "descripcion",                  null: false
+    t.string  "rend_caja",                    null: false
+    t.integer "precio",                       null: false
+    t.string  "tipo",                         null: false
+    t.string  "rotar"
+    t.integer "cantidad"
+    t.integer "categoria_id"
+    t.string  "superficie"
+    t.boolean "valido",       default: false, null: false
   end
 
   create_table "tiendas", force: :cascade do |t|

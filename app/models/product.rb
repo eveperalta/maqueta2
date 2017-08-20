@@ -1,37 +1,50 @@
-class Product
-  include ActiveModel::Validations
-  include ActiveModel::Conversion
-  extend ActiveModel::Naming
+class Product < ActiveRecord::Base
+  self.table_name = 'product'
+  after_initialize :set_default_values
+  # include ActiveModel::Validations
+  # include ActiveModel::Conversion
+  # extend ActiveModel::Naming
   MAX_WORDS_IN_DESC = 5
 
-  attr_accessor :nombre, :sku, :img_url, :descripcion, :rend_caja, :precio, :tipo, :rotar, :cantidad, :categoria, :superficie
+  # attr_accessor :nombre, :sku, :img_url, :descripcion, :rend_caja, :precio, :tipo, :rotar, :cantidad, :categoria, :superficie
 
   validates_presence_of :nombre, :sku, :img_url, :descripcion, :rend_caja, :precio, :tipo
   validate :checkCantidad
 
-  def initialize(attributes = {})
-    @rotar = false
-    @cantidad = 1
-    @superficie = 'concreto' # temporal, solo se usa para la api de cubicador.
-    attributes.each do |name, value|
-      send("#{name}=", value)
-    end
+  # def initialize(attributes = {})
+  #   @rotar = "false"
+  #   @cantidad = 1
+  #   @superficie = 'concreto' # temporal, solo se usa para la api de cubicador.
+  #   attributes.each do |name, value|
+  #     send("#{name}=", value)
+  #   end
+  # end
+
+  def set_default_values
+    self[:rotar] ||= "false"
+    self[:cantidad] ||= 1
+    self[:superficie] ||= 'concreto'
+    self[:valido] ||= false
   end
 
-  def persisted?
-    false
-  end
+  # def persisted?
+  #   false
+  # end
 
   def sku=(new_sku)
-    @sku = new_sku.strip
+    self[:sku] = new_sku.strip
+  end
+
+  def rotar=(new_rotar)
+    self[:rotar] = new_rotar.present? ? new_rotar : 'false'
   end
 
   def nombre=(new_nombre)
-    @nombre = new_nombre.strip
+    self[:nombre] = new_nombre.strip
   end
 
   def img_url=(new_img_url)
-    @img_url = new_img_url.strip
+    self[:img_url] = new_img_url.strip
   end
 
   def descripcion=(new_descripcion)
@@ -80,7 +93,7 @@ class Product
         end
       end
       
-      @descripcion = descripcion_arr.join(" ") + "."
+      self[:descripcion] = descripcion_arr.join(" ") + "."
     end
   end
 
@@ -101,28 +114,30 @@ class Product
       end
 
       if !m2_val.nil?
-        @rend_caja = "#{m2_val} m2"
+        self[:rend_caja] = "#{m2_val} m2"
       end
     end
   end
 
   def precio=(new_precio)
-    @precio = new_precio.to_i
+    self[:precio] = new_precio.to_i
   end
 
   def tipo=(new_tipo)
     if new_tipo =~ /muro/i
-      @tipo = :muro
+      self[:tipo] = :muro
     elsif new_tipo =~ /piso/i
-      @tipo = :piso
-    else
-      @tipo = nil
+      self[:tipo] = :piso
     end
   end
 
   def cantidad=(new_cantidad)
-    @cantidad = new_cantidad.to_i
+    self[:cantidad] = new_cantidad.to_i
   end
+
+  # def categoria_id=(new_categoria_id)
+  #   @categoria_id = new_categoria_id
+  # end
 
   def checkCantidad
     if self.cantidad < 1

@@ -80,26 +80,28 @@ class API
 	def self.getProductsByCategory(params)
 		# A REVISAR:
 		# Cambiar el get_params[:categoria_id] de array a string, en caso de que no se quiera obtener todos los productos de todas las categorias.
-		get_params = {categoria_id: [params[:categoria_id]]}
+		# get_params = {categoria_id: [params[:categoria_id]]}
+		category_obj = Category.find_by(sodimac_id: params[:categoria_id])
 		numero_tienda = Config.getNumeroTienda
 
 		if !numero_tienda.nil?
-			if get_params[:categoria_id].size != 0
+			if !category_obj.nil?
 				products = []
 				products_failed = []
 				offset = 0
 				# Traer cada (limit) productos.
 				limit = 100
+				pass = true
 
-				# Recorrer el o los codigos de piso.
-				get_params[:categoria_id].each do |categoria_id|
-					pass = true
-					# Para traer todos productos, hay que variar cada (limit) el offset de la URL hasta encontrar menos productos que el (limit).
+				# Para traer todos productos, hay que variar cada (limit) el offset de la URL hasta encontrar menos productos que el (limit).
+				if category_obj.timeToUseApi()
+					puts "USA API"
+					# Si ha pasado tiempo que no se usa la api (Category::API_TIME_TO_USE),
+					# se hace uso de la api.
 					while pass
+						products_api_url = JSON.parse(HTTP.get("http://api-car.azurewebsites.net:80/Categories/CL/#{numero_tienda}/#{category_obj.sodimac_id}?orderBy=2&%24offset=#{offset}&%24limit=#{limit}").to_s)
 
-						products_api_url = JSON.parse(HTTP.get("http://api-car.azurewebsites.net:80/Categories/CL/#{numero_tienda}/#{categoria_id}?orderBy=2&%24offset=#{offset}&%24limit=#{limit}").to_s)
-
-						# puts "OFFSET -> #{offset} | PRODUCTOS -> #{products_api_url["products"].size}"
+						puts "OFFSET -> #{offset} | PRODUCTOS -> #{products_api_url["products"].size}"
 						if products_api_url["products"].size != 0
 							products_api_url["products"].each do |product|
 								product_obj = Product.new(
@@ -108,8 +110,8 @@ class API
 									img_url: product["multimedia"].first["url"],
 									descripcion: getDescriptionFromApi(product),
 									precio: product["price"]["normal"],
-									tipo: params[:category_type],
-									categoria: params[:category_name]
+									tipo: category_obj.tipo,
+									categoria_id: category_obj.id
 									)
 								# Realizar llamado de la ficha tecnica del producto.
 								ficha_api_url = JSON.parse(HTTP.get("http://api-car.azurewebsites.net/Products/CL/#{numero_tienda}/#{product_obj.sku}/Sheet"))
@@ -127,14 +129,10 @@ class API
 
 								# Si el producto cumple las validaciones de la clase, se incluye.
 								if product_obj.valid?
+									product_obj.valido = true
 									products << product_obj
 								else
 									products_failed << product_obj
-								end
-								# TEMPORAL QUITAR ESTO
-								if products.size >= 12
-									pass = false
-									break
 								end
 							end # each product
 
@@ -147,17 +145,25 @@ class API
 								pass = false
 							end
 
-
-
 						else
 							# No se encontraron productos.
 							pass = false
 						end # products_api_url["products"].size != 0
 					end # while(pass)
-				end # each categoria_id
+					
+					# Una vez que se termino de usar la api, teniendo ya todos los productos,
+					# Se deja corriendo en un JOB la insercion a la BD de estos productos con su categoria
+					# asociada y seteando la fecha/hora de este proceso.
+					if products.size != 0
+						insertProductsToBD(products, category_obj)
+						# ProductApiJob.perform_later(products, category_obj, DateTime.now)
+					end
 
-				# puts "FINAL #{products.size} productos"
-				# puts "FALLARON #{products_failed.size} productos"
+				else
+					# No es necesario usar la API, se sacan los productos de la BD.
+					puts "USA BD"
+					products = Product.where(categoria_id: category_obj.id).where(valido: 'true')
+				end # category_obj.timeToUseApi(Datetime.now)
 
 				return products
 			else
@@ -166,7 +172,17 @@ class API
 		else
 			return nil
 		end
+	end
 
+	def self.insertProductsToBD(products, category_obj)
+		# Borrar de la BD los productos pasados.
+		Product.delete_all(categoria_id: category_obj.id)
+		# Insertar los nuevos.
+		values = products.map{|p| "('#{p.nombre}','#{p.sku}','#{p.img_url}','#{p.descripcion}','#{p.rend_caja}','#{p.precio}','#{p.tipo}','#{p.rotar}','#{p.cantidad}','#{p.categoria_id}','#{p.superficie}','#{p.valido}')" }.join(",")
+		Product.connection.execute("INSERT INTO #{Product.table_name} (nombre, sku, img_url, descripcion, rend_caja, precio, tipo, rotar, cantidad, categoria_id, superficie, valido) VALUES #{values}")
+    # Setear la fecha/hora (ahora) de la insercion.
+		category_obj.last_api_used = DateTime.current.in_time_zone
+		category_obj.save
 	end
 
 	def self.getFichaProductoBySku(sku, tipo)

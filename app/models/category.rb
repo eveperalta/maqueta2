@@ -9,4 +9,20 @@ class Category < ActiveRecord::Base
 		{nombre: 'Porcelanato', sodimac_id: 'scat991120', tipo: :piso, img: 'porcelanato.jpg', alt_txt: 'Elegir Porcelanato'},
 		{nombre: 'Vinilico', sodimac_id: 'cat2880013', tipo: :piso, img: 'vinilico.jpg', alt_txt: 'Elegir Vinilico'},
 	]
+	API_TIME_TO_USE = 6
+
+	has_many :products, class_name: "Product", foreign_key: :categoria_id
+
+	def timeToUseApi()
+		today = DateTime.current.in_time_zone
+		if !self.last_api_used.nil?
+			if ((today - self.last_api_used) / 3600).round >= API_TIME_TO_USE
+				return true
+			else
+				return false
+			end
+		else
+			return true
+		end
+	end
 end
