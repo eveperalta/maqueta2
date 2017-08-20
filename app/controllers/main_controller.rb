@@ -51,16 +51,20 @@ class MainController < ApplicationController
 
 	def carrito_add
 		if !params[:product].nil?
-			carrito_obj = Carrito.new
-			product_obj = Product.new(params[:product])
-			carrito_obj.items << product_obj
-			carrito_obj.calculateTotal
+			product_obj = Product.find_by(sku: params[:product][:sku])
+			if !product_obj.nil?
+				carrito_obj = Carrito.new
+				carrito_obj.items << product_obj
+				carrito_obj.calculateTotal
 
-			render json: {
-				carrito_item: render_to_string(partial: 'carrito_form', formats: [:html], layout: false, locals: {carrito: carrito_obj}),
-				item_sku: product_obj.sku,
-				precio_total_item: carrito_obj.total
-			}
+				render json: {
+					carrito_item: render_to_string(partial: 'carrito_form', formats: [:html], layout: false, locals: {carrito: carrito_obj}),
+					item_sku: product_obj.sku,
+					precio_total_item: carrito_obj.total
+				}
+			else
+				render json: {msg: "Hubo problemas en encontrar el producto en la BD."}, status: :unprocessable_entity
+			end
 		else
 			render json: {msg: "Hubo problemas en enviar los datos del producto al servidor"}, status: :unprocessable_entity
 		end
@@ -75,11 +79,11 @@ class MainController < ApplicationController
 
 					# Recorrer los pisos y muros para obtener su ficha y asi poder generar el PDF.
 					params[:items].each do |item|
-						product_obj = API.getFichaProductoBySku(item[:sku], item[:tipo])
+						product_obj = API.getFichaProductoBySku(item[1][:sku], item[1][:tipo])
 						if !product_obj.nil?
-							if product_obj.tipo == :piso
+							if product_obj.tipo == "piso"
 								pdf_options[:pisos] << product_obj
-							elsif product_obj.tipo == :muro
+							elsif product_obj.tipo == "muro"
 								pdf_options[:muros] << product_obj
 							end
 						end

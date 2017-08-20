@@ -188,18 +188,19 @@ class API
 	def self.getFichaProductoBySku(sku, tipo)
 		if sku.present?
 			numero_tienda = Config.getNumeroTienda
-			ficha_producto_api = JSON.parse(HTTP.get("http://api-car.azurewebsites.net/Products/CL/#{numero_tienda}/#{sku}").to_s)
+			# ficha_producto_api = JSON.parse(HTTP.get("http://api-car.azurewebsites.net/Products/CL/#{numero_tienda}/#{sku}").to_s)
+			product_obj = Product.find_by(sku: sku)
 
-			if ficha_producto_api.kind_of?(Array)
-				product_obj = Product.new(
-					nombre: ficha_producto_api[0]["name"],
-					sku: ficha_producto_api[0]["sku"],
-					img_url: ficha_producto_api[0]["multimedia"].first["url"],
-					descripcion: getDescriptionFromApi(ficha_producto_api[0]),
-					precio: ficha_producto_api[0]["price"]["normal"],
-					tipo: tipo,
-					rend_caja: '-'
-				)
+			if !product_obj.nil?
+				# product_obj = Product.new(
+				# 	nombre: ficha_producto_api[0]["name"],
+				# 	sku: ficha_producto_api[0]["sku"],
+				# 	img_url: ficha_producto_api[0]["multimedia"].first["url"],
+				# 	descripcion: getDescriptionFromApi(ficha_producto_api[0]),
+				# 	precio: ficha_producto_api[0]["price"]["normal"],
+				# 	tipo: tipo,
+				# 	rend_caja: '-'
+				# )
 
 				if product_obj.valid?
 					return product_obj
@@ -220,19 +221,20 @@ class API
 		productos = []
 
 		items.each do |item|
+			product_obj = Product.find_by(sku: item[1][:sku])
 			# Validar los productos (solo cantidad y presencia de sku).
-			product_obj = Product.new(
-				nombre: "--",
-				sku: item[:sku],
-				img_url: '--',
-				descripcion: '--',
-				precio: 0,
-				cantidad: item[:cantidad],
-				tipo: item[:tipo],
-				rend_caja: '1 m2'
-			)
+			# product_obj = Product.new(
+			# 	nombre: "--",
+			# 	sku: item[:sku],
+			# 	img_url: '--',
+			# 	descripcion: '--',
+			# 	precio: 0,
+			# 	cantidad: item[:cantidad],
+			# 	tipo: item[:tipo],
+			# 	rend_caja: '1 m2'
+			# )
 
-			if product_obj.valid?
+			if !product_obj.nil? && product_obj.valid?
 				productos << {sku: product_obj.sku, cantidad: product_obj.cantidad}
 			else
 				# Si alguno de los productos falla, se detiene.

@@ -28,18 +28,6 @@ class Pdf < Prawn::Document
 
     font "Custom"
 
-    # pisos_arr = [
-    #   {img: 'http://sodimac.scene7.com/is/image/SodimacCL/1862782', descripcion: "Esto es una descripcion.", precio: "$$$$$", sku: "2973561"},
-    #   {img: 'http://sodimac.scene7.com/is/image/SodimacCL/1862782', descripcion: "Esto es una descripcion.", precio: "$$$$$", sku: "2973561"},
-    #   {img: 'http://sodimac.scene7.com/is/image/SodimacCL/1862782', descripcion: "Esto es una descripcion.", precio: "$$$$$", sku: "2973561"},
-    # ]
-
-    # muros_arr = [
-    #   {img: 'http://sodimac.scene7.com/is/image/SodimacCL/1862782', descripcion: "Esto es una descripcion.", precio: "$$$$$", sku: "2973561"},
-    #   {img: 'http://sodimac.scene7.com/is/image/SodimacCL/1862782', descripcion: "Esto es una descripcion.", precio: "$$$$$", sku: "2973561"},
-    #   {img: 'http://sodimac.scene7.com/is/image/SodimacCL/1862782', descripcion: "Esto es una descripcion.", precio: "$$$$$", sku: "2973561"},
-    # ]
-
     header
     footer
     intro
