@@ -249,7 +249,7 @@ label.like-label > i{
 input[type="radio"]:checked + label > i {
   color: red;
 }
-.slick-prev:before {
+.slick-arrow:before {
   font-size: 48px;
 }
 div.slick-slide > div.card{
