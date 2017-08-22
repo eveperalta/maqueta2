@@ -43,32 +43,6 @@ $( document ).ready(function(){
   // Inicializar slick carrusel
   slick_carousel.slick(slick_carousel_config);
 
-  $('button#piso_img_url').on('click', function(e){
-    console.log(this);
-    console.log("click hidden imagen piso");
-
-  });
-
-  $('button#piso_rotar').on('click', function(e){
-    console.log(this);
-    console.log("click hidden rotar piso");
-
-  });
-
-  $('button#muro_img_url').on('click', function(e){
-    console.log(this);
-    console.log("click hidden imagen muro");
-
-
-  });
-
-  // Boton que levanta el modal para usar el cubicador.
-  $('button#muro_rotar').on('click', function(e){
-    console.log(this);
-    console.log("click hidden rotar muro");
-
-  });
-
   $('.tooltipped').tooltip({delay: 50});
 
   // Inicializar los modal para que se pueda abrir mediante JS.
@@ -104,15 +78,13 @@ $( document ).ready(function(){
       event.stopPropagation();
     }
   });
+
+  $('.materialboxed').materialbox();
 });
 
 $('a.dropdown-button').on('click', function(e){
   e.preventDefault();
   resetBadge();
-});
-
-$(document).ready(function(){
-  $('.materialboxed').materialbox();
 });
 
 $(".btn-floating").on("click", function(e){//funcion del boton ver
@@ -199,14 +171,13 @@ $('div.slick-carousel').on('afterChange', function(event, slick, currentSlide){
       // Se agregaran los siguientes n items (carrusel_meta.show_each) si
       // la siguiente posicion del carrusel es la ultima (sgte_pos + slidesToShow).
       if (currentSlide + slick.options.slidesToShow >= slick.slideCount) {
-        console.log("Traer mas");
         updateCarousel(type, false, 'next');
 
       }else{
-        console.log("Aun no");
+        // console.log("Aun no");
       }
     }else{
-      console.log("Ya se agregaron todos los items al carrusel");
+      // console.log("Ya se agregaron todos los items al carrusel");
     }
   }else{
     console.error("No se pudo determinar cual carrusel.");
@@ -228,7 +199,6 @@ $('form#carrito_form').on('submit', function(event){
   // Se agrega el parametro de email en los datos que enviara ajax.
   // (POR HACER)Hay que obtener el email ingresado por el usuario en el modal...
   // data.push({name: "email", value: ''});
-  console.log(data);
 
   $.ajax({
     url: event.target.action,
@@ -239,7 +209,6 @@ $('form#carrito_form').on('submit', function(event){
     }
   }).done(function(data, textStatus, jqXHR) {
     // Aqui se debe agregar el par de productos gustados al carrito.
-    console.log(data);
 
   }).fail(function(jqXHR, textStatus, errorThrown) {
     var error_json = jqXHR.responseJSON;
@@ -446,6 +415,8 @@ function updateCarousel(type, delete_all, arrow_dir)
   // console.log(carrusel_meta);
 }
 
+// Funcion que muestra|oculta y actualiza el badge junto al boton de navegacion
+// del carrusel.
 function updateCarouselBadge(badge_element, value, clear) 
 {
   badge_element = badge_element.find('span');
@@ -744,7 +715,6 @@ $("#buttonModal1").click(function(e) {
       button.val('Enviar');
       button.prop('disabled', false);
     });
-
   }
 });
 
@@ -801,7 +771,6 @@ $("#buttonModal4").click(function(e) {
       btn.prop('disabled', false);
     });
   }
-
 });
 
 // Formatear el campo del rut al escribir o pegar en el input.
