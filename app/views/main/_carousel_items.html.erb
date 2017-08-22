@@ -33,6 +33,7 @@
         <%= f.hidden_field(:precio, value: item.precio) %>
         <%= f.hidden_field(:tipo, value: item.tipo) %>
         <%= f.hidden_field(:cantidad, value: item.cantidad) %>
+        <%= f.hidden_field(:categoria, value: category.nombre.downcase) %>
         <%= f.hidden_field(:superficie, value: item.superficie) %>
       </div>
     </div>

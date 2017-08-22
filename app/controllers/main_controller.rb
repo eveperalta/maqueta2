@@ -23,10 +23,12 @@ class MainController < ApplicationController
 			if params[:category_id].present?
 				items = API.getProductsByCategory(categoria_id: params[:category_id], category_type: params[:category_type], category_name: params[:category_name])
 
+				category_obj = Category.select(:nombre).find_by(sodimac_id: params[:category_id])
+
 				if !items.nil?
 					html_item_arr = []
 					items.each_with_index do |item, index|
-						html_item_arr << render_to_string(partial: 'carousel_items', formats: [:html], layout: false, locals: {item: item, type: Product.new, index: index})
+						html_item_arr << render_to_string(partial: 'carousel_items', formats: [:html], layout: false, locals: {item: item, type: Product.new, index: index, category: category_obj})
 					end
 
 					render json: {
@@ -51,7 +53,8 @@ class MainController < ApplicationController
 
 	def carrito_add
 		if !params[:product].nil?
-			product_obj = Product.find_by(sku: params[:product][:sku])
+			product_obj = Product.getProductBySku(params[:product][:sku], {cantidad: params[:product][:cantidad]})
+
 			if !product_obj.nil?
 				carrito_obj = Carrito.new
 				carrito_obj.items << product_obj

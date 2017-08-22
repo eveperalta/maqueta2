@@ -256,7 +256,7 @@ class API
 	end
 
 	def self.sendToCubicador(data)
-		cub_res = HTTP.auth(CUB_AUTH).post("http://apisos.ubq.cl/materiales/", json: {piso: data[:piso], superficie: data[:superficie], m2: data[:m2].to_f, sku: data[:sku]})
+		cub_res = HTTP.auth(CUB_AUTH).post("http://apisos.ubq.cl/materiales/", json: {piso: data[:piso].downcase, superficie: data[:superficie], m2: data[:m2].to_f, sku: data[:sku]})
 
 		if cub_res.code == 200
 			# Todo ok, solo se devuelve la cantidad de cajas.
