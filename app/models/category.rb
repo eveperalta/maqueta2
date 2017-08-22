@@ -10,8 +10,10 @@ class Category < ActiveRecord::Base
 		{nombre: 'Vinilico', sodimac_id: 'cat2880013', tipo: :piso, img: 'vinilico.jpg', alt_txt: 'Elegir Vinilico'},
 	]
 	API_TIME_TO_USE = 6
+	TIPOS = [:piso, :muro]
 
-	has_many :products, class_name: "Product", foreign_key: :categoria_id
+  validates_presence_of :sodimac_id, :nombre, :tipo, :img, :alt_txt
+	has_many :products, class_name: "Product", foreign_key: :categoria_id, dependent: :delete_all
 
 	def timeToUseApi()
 		today = DateTime.current.in_time_zone
@@ -24,5 +26,26 @@ class Category < ActiveRecord::Base
 		else
 			return true
 		end
+	end
+
+	def sodimac_id=(new_sodimac_id)
+		self[:sodimac_id] = new_sodimac_id.strip if new_sodimac_id.present?
+	end
+
+	def nombre=(new_nombre)
+		self[:nombre] = new_nombre.strip.titleize if new_nombre.present?
+	end
+
+	def tipo=(new_tipo)
+		if new_tipo.present?
+			new_tipo = new_tipo.to_sym
+			if TIPOS.include?(new_tipo)
+				self[:tipo] = new_tipo
+			end
+		end
+	end
+
+	def alt_txt=(new_alt_txt)
+		self[:alt_txt] = new_alt_txt.strip if new_alt_txt.present?
 	end
 end
