@@ -1,11 +1,12 @@
 var slick_carousel = $('div.slick-carousel');
 var slick_carousel_config = {
-    infinite: true,
+    infinite: false,
     slidesToShow: 3,
     slidesToScroll: 1,
     edgeFriction: 0,
     swipeToSlide: true,
-    respondTo: "window"
+    respondTo: "window",
+    nextArrow: '<button type="button" class="slick-next">Next<span class="badge slick-carousel-badge hide"></span></button>',
   };
 var badge_element = document.getElementById('carrito-badge');
 var bagde_count = 0
@@ -18,6 +19,13 @@ var recurrent_nodes = {
    num_cajas: document.getElementById('num_cajas')
 }
 var cub_item = null;
+var carrusel_meta = {
+  badge_showing: false,
+  show_each: 10,
+  piso: {carousel_node: $('div#pisos_carousel'), last_item_index: 0, items: []},
+  muro: {carousel_node: $('div#muros_carousel'), last_item_index: 0, items: []}
+}
+
 
 //dropdown menu
 $( document ).ready(function(){
@@ -34,32 +42,6 @@ $( document ).ready(function(){
 
   // Inicializar slick carrusel
   slick_carousel.slick(slick_carousel_config);
-
-  $('button#piso_img_url').on('click', function(e){
-    console.log(this);
-    console.log("click hidden imagen piso");
-
-  });
-
-  $('button#piso_rotar').on('click', function(e){
-    console.log(this);
-    console.log("click hidden rotar piso");
-
-  });
-
-  $('button#muro_img_url').on('click', function(e){
-    console.log(this);
-    console.log("click hidden imagen muro");
-
-
-  });
-
-  // Boton que levanta el modal para usar el cubicador.
-  $('button#muro_rotar').on('click', function(e){
-    console.log(this);
-    console.log("click hidden rotar muro");
-
-  });
 
   $('.tooltipped').tooltip({delay: 50});
 
@@ -96,15 +78,13 @@ $( document ).ready(function(){
       event.stopPropagation();
     }
   });
+
+  $('.materialboxed').materialbox();
 });
 
 $('a.dropdown-button').on('click', function(e){
   e.preventDefault();
   resetBadge();
-});
-
-$(document).ready(function(){
-  $('.materialboxed').materialbox();
 });
 
 $(".btn-floating").on("click", function(e){//funcion del boton ver
@@ -147,26 +127,18 @@ $('a.category-link').on('click', function(e){
     }
   }).done(function(data, textStatus, jqXHR) {
       console.log(data);
-      var carousel;
 
-      if (data.carousel_type == 'piso')
-        carousel = $('div#pisos_carousel');
-      else if(data.carousel_type == 'muro')
-        carousel = $('div#muros_carousel');
-      else
-        carousel = null;
-
-      if (carousel !== null) {
-        // Quitar todos los elementos del carrusel
-        carousel.slick('removeSlide', null, null, true);
-
-        // Luego agregarlos.
-        for (var i = 0; i < data.carousel_items.length; i++) {
-          carousel.slick('slickAdd', data.carousel_items[i]);
-        }
+      if (data.carousel_type == 'piso'){
+        carrusel_meta.piso.items = data.carousel_items;
+        carrusel_meta.piso.last_item_index = 0;
+      }
+      else if(data.carousel_type == 'muro'){
+        carrusel_meta.muro.items = data.carousel_items;
+        carrusel_meta.muro.last_item_index = 0;
       }
 
-        $('#loading_app').fadeOut(500);
+      updateCarousel(data.carousel_type, true, null);
+      $('#loading_app').fadeOut(500);
 
   }).fail(function(jqXHR, textStatus, errorThrown) {
     error_json = jqXHR.responseJSON;
@@ -178,6 +150,48 @@ $('a.category-link').on('click', function(e){
   });
 });
 
+// Evento que se dispara DESPUES de hacer el cambio de item (o slide) del carrusel.
+$('div.slick-carousel').on('afterChange', function(event, slick, currentSlide){
+  // Se guarda que tipo de carrusel (piso o muro) se esta usando,
+  // con el nombre del id del DIV contenedor.
+  var items_count = 0;
+  var type = null;
+  if (event.currentTarget.id === 'pisos_carousel'){
+    type = 'piso';
+    items_count = carrusel_meta.piso.items.length;
+  }
+  else if (event.currentTarget.id === 'muros_carousel'){
+    type = 'muro';
+    items_count = carrusel_meta.muro.items.length;
+  }
+
+  if (type !== null) {
+    // Se verifica si quedan productos por agregar al carrusel,
+    if (items_count !== slick.slideCount) {
+      // Se agregaran los siguientes n items (carrusel_meta.show_each) si
+      // la siguiente posicion del carrusel es la ultima (sgte_pos + slidesToShow).
+      if (currentSlide + slick.options.slidesToShow >= slick.slideCount) {
+        updateCarousel(type, false, 'next');
+
+      }else{
+        // console.log("Aun no");
+      }
+    }else{
+      // console.log("Ya se agregaron todos los items al carrusel");
+    }
+  }else{
+    console.error("No se pudo determinar cual carrusel.");
+  }
+});
+
+// Evento que se dispara ANTES de hacer el cambio de item (o slide) del carrusel.
+$('div.slick-carousel').on('beforeChange', function(event, slick, currentSlide, nextSlide){
+  if (carrusel_meta.badge_showing) {
+    updateCarouselBadge(slick.$nextArrow, null, true);
+    updateCarouselBadge(slick.$prevArrow, null, true);
+  }
+});
+
 // Envio de formulario del carrito de pisos y muros gustados.
 $('form#carrito_form').on('submit', function(event){
   event.preventDefault();
@@ -185,7 +199,6 @@ $('form#carrito_form').on('submit', function(event){
   // Se agrega el parametro de email en los datos que enviara ajax.
   // (POR HACER)Hay que obtener el email ingresado por el usuario en el modal...
   // data.push({name: "email", value: ''});
-  console.log(data);
 
   $.ajax({
     url: event.target.action,
@@ -196,7 +209,6 @@ $('form#carrito_form').on('submit', function(event){
     }
   }).done(function(data, textStatus, jqXHR) {
     // Aqui se debe agregar el par de productos gustados al carrito.
-    console.log(data);
 
   }).fail(function(jqXHR, textStatus, errorThrown) {
     var error_json = jqXHR.responseJSON;
@@ -351,6 +363,75 @@ function sendToCarritoAjax(data, url)
   }).always(function(data, textStatus, errorThrown) {
 
   });
+}
+
+// Funcion que agrega n items (carrusel_meta.show_each) al carrusel.
+// type = si es piso o muro
+// delete_all = si hay que borrar los items del carrusel
+// solamente los borra cambiar de categoria.
+function updateCarousel(type, delete_all, arrow_dir)
+{
+  var meta_temp = null;
+  var limit = 0;
+  var arrow = null;
+
+  if (type === 'piso') 
+    meta_temp = carrusel_meta.piso;
+  else if (type === 'muro')
+    meta_temp = carrusel_meta.muro;
+
+  if (meta_temp !== null) {
+    // Borrar todos los items del carrusel si delete_all == true.
+    if (delete_all)
+      meta_temp.carousel_node.slick('removeSlide', null, null, true);
+
+    // Calcular hasta donde se recorrera el array de productos.
+    if (meta_temp.last_item_index + carrusel_meta.show_each >= meta_temp.items.length) {
+      limit = meta_temp.items.length;
+    }else{
+      limit = meta_temp.last_item_index + carrusel_meta.show_each;
+    }
+    
+    // Se itera el array de productos para agregarlos al carrusel hasta el limit.
+    for (var i = meta_temp.last_item_index; i < limit; i++) {
+      meta_temp.carousel_node.slick('slickAdd', meta_temp.items[i]);
+    }
+
+    // Hay que volver a obtener la referencia del boton de sgte | prev,
+    // debido que al momento de agregar o borrar elementos del carrusel, este se 
+    // reinicializa y se pierde la referencia.
+    if (arrow_dir === 'next')
+      arrow = meta_temp.carousel_node.slick('getSlick').$nextArrow;
+    else if (arrow_dir === 'prev')
+      arrow = meta_temp.carousel_node.slick('getSlick').$prevArrow;
+
+    // Mostrar el bagde con la cantidad de productos agregados al carrusel.
+    if (arrow !== null)
+      updateCarouselBadge(arrow, limit - meta_temp.last_item_index, false);
+    
+    // Asignar la ultima posicion.
+    meta_temp.last_item_index = i;
+  }
+  // console.log(carrusel_meta);
+}
+
+// Funcion que muestra|oculta y actualiza el badge junto al boton de navegacion
+// del carrusel.
+function updateCarouselBadge(badge_element, value, clear) 
+{
+  badge_element = badge_element.find('span');
+  if (clear) {
+    badge_element.addClass('hide');
+    badge_element.html('');
+    carrusel_meta.badge_showing = false;
+
+  }else{
+    if (value !== null || value !== undefined) {
+      badge_element.html('+ ' + value.toString());
+      badge_element.removeClass('hide');
+      carrusel_meta.badge_showing = true;
+    }
+  }
 }
 
 // Funcion que revisa si existe un par de productos gustados en el carrito antes de agregar un nuevo par para evitar duplicados.
@@ -634,7 +715,6 @@ $("#buttonModal1").click(function(e) {
       button.val('Enviar');
       button.prop('disabled', false);
     });
-
   }
 });
 
@@ -691,7 +771,6 @@ $("#buttonModal4").click(function(e) {
       btn.prop('disabled', false);
     });
   }
-
 });
 
 // Formatear el campo del rut al escribir o pegar en el input.

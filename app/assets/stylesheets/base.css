@@ -249,7 +249,7 @@ label.like-label > i{
 input[type="radio"]:checked + label > i {
   color: red;
 }
-.slick-prev:before {
+.slick-arrow:before {
   font-size: 48px;
 }
 div.slick-slide > div.card{
@@ -388,4 +388,13 @@ text-align: center;
 }
 select.tienda-sel{
   display: inline;
+}
+
+span.slick-carousel-badge{
+  display: inline-block;
+  line-height: 22px !important;
+  height: 20px !important;
+  background-color: white !important;
+  color: #E10024 !important;
+  border-radius: 14px !important; 
 }

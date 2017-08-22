@@ -144,4 +144,15 @@ class Product < ActiveRecord::Base
       self.errors[:cantidad] = "La cantidad no puede ser menor que 0."
     end
   end
+
+  def self.getProductBySku(sku, data_overwrite)
+    product_obj = self.find_by(sku: sku)
+    if !product_obj.nil?
+      product_obj.cantidad = data_overwrite[:cantidad] if !data_overwrite[:cantidad].nil?
+      
+      return product_obj
+    else
+      return nil
+    end
+  end
 end
