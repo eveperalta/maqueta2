@@ -5,7 +5,8 @@ var slick_carousel_config = {
     slidesToScroll: 1,
     edgeFriction: 0,
     swipeToSlide: true,
-    respondTo: "window"
+    respondTo: "window",
+    nextArrow: '<button type="button" class="slick-next">Next<span class="badge slick-carousel-badge hide"></span></button>',
   };
 var badge_element = document.getElementById('carrito-badge');
 var bagde_count = 0
@@ -19,6 +20,7 @@ var recurrent_nodes = {
 }
 var cub_item = null;
 var carrusel_meta = {
+  badge_showing: false,
   show_each: 10,
   piso: {carousel_node: $('div#pisos_carousel'), last_item_index: 0, items: []},
   muro: {carousel_node: $('div#muros_carousel'), last_item_index: 0, items: []}
@@ -163,7 +165,7 @@ $('a.category-link').on('click', function(e){
         carrusel_meta.muro.last_item_index = 0;
       }
 
-      updateCarousel(data.carousel_type, true);
+      updateCarousel(data.carousel_type, true, null);
       $('#loading_app').fadeOut(500);
 
   }).fail(function(jqXHR, textStatus, errorThrown) {
@@ -176,8 +178,8 @@ $('a.category-link').on('click', function(e){
   });
 });
 
-// Evento que se dispara despues de hacer el cambio de item (o slide) del carrusel.
-$('div.slick-carousel').on('afterChange', function(event, slick, currentSlide, nextSlide){
+// Evento que se dispara DESPUES de hacer el cambio de item (o slide) del carrusel.
+$('div.slick-carousel').on('afterChange', function(event, slick, currentSlide){
   // Se guarda que tipo de carrusel (piso o muro) se esta usando,
   // con el nombre del id del DIV contenedor.
   var items_count = 0;
@@ -191,8 +193,6 @@ $('div.slick-carousel').on('afterChange', function(event, slick, currentSlide, n
     items_count = carrusel_meta.muro.items.length;
   }
 
-  // console.log("posicion " + (currentSlide + slick.options.slidesToShow));
-
   if (type !== null) {
     // Se verifica si quedan productos por agregar al carrusel,
     if (items_count !== slick.slideCount) {
@@ -200,7 +200,7 @@ $('div.slick-carousel').on('afterChange', function(event, slick, currentSlide, n
       // la siguiente posicion del carrusel es la ultima (sgte_pos + slidesToShow).
       if (currentSlide + slick.options.slidesToShow >= slick.slideCount) {
         console.log("Traer mas");
-        updateCarousel(type, false);
+        updateCarousel(type, false, 'next');
 
       }else{
         console.log("Aun no");
@@ -210,6 +210,14 @@ $('div.slick-carousel').on('afterChange', function(event, slick, currentSlide, n
     }
   }else{
     console.error("No se pudo determinar cual carrusel.");
+  }
+});
+
+// Evento que se dispara ANTES de hacer el cambio de item (o slide) del carrusel.
+$('div.slick-carousel').on('beforeChange', function(event, slick, currentSlide, nextSlide){
+  if (carrusel_meta.badge_showing) {
+    updateCarouselBadge(slick.$nextArrow, null, true);
+    updateCarouselBadge(slick.$prevArrow, null, true);
   }
 });
 
@@ -392,10 +400,11 @@ function sendToCarritoAjax(data, url)
 // type = si es piso o muro
 // delete_all = si hay que borrar los items del carrusel
 // solamente los borra cambiar de categoria.
-function updateCarousel(type, delete_all)
+function updateCarousel(type, delete_all, arrow_dir)
 {
   var meta_temp = null;
   var limit = 0;
+  var arrow = null;
 
   if (type === 'piso') 
     meta_temp = carrusel_meta.piso;
@@ -418,10 +427,40 @@ function updateCarousel(type, delete_all)
     for (var i = meta_temp.last_item_index; i < limit; i++) {
       meta_temp.carousel_node.slick('slickAdd', meta_temp.items[i]);
     }
+
+    // Hay que volver a obtener la referencia del boton de sgte | prev,
+    // debido que al momento de agregar o borrar elementos del carrusel, este se 
+    // reinicializa y se pierde la referencia.
+    if (arrow_dir === 'next')
+      arrow = meta_temp.carousel_node.slick('getSlick').$nextArrow;
+    else if (arrow_dir === 'prev')
+      arrow = meta_temp.carousel_node.slick('getSlick').$prevArrow;
+
+    // Mostrar el bagde con la cantidad de productos agregados al carrusel.
+    if (arrow !== null)
+      updateCarouselBadge(arrow, limit - meta_temp.last_item_index, false);
+    
     // Asignar la ultima posicion.
     meta_temp.last_item_index = i;
   }
-  console.log(carrusel_meta);
+  // console.log(carrusel_meta);
+}
+
+function updateCarouselBadge(badge_element, value, clear) 
+{
+  badge_element = badge_element.find('span');
+  if (clear) {
+    badge_element.addClass('hide');
+    badge_element.html('');
+    carrusel_meta.badge_showing = false;
+
+  }else{
+    if (value !== null || value !== undefined) {
+      badge_element.html('+ ' + value.toString());
+      badge_element.removeClass('hide');
+      carrusel_meta.badge_showing = true;
+    }
+  }
 }
 
 // Funcion que revisa si existe un par de productos gustados en el carrito antes de agregar un nuevo par para evitar duplicados.

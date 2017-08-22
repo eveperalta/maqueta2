@@ -389,3 +389,12 @@ text-align: center;
 select.tienda-sel{
   display: inline;
 }
+
+span.slick-carousel-badge{
+  display: inline-block;
+  line-height: 22px !important;
+  height: 20px !important;
+  background-color: white !important;
+  color: #E10024 !important;
+  border-radius: 14px !important; 
+}
