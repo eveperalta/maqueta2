@@ -1,6 +1,6 @@
 var slick_carousel = $('div.slick-carousel');
 var slick_carousel_config = {
-    infinite: true,
+    infinite: false,
     slidesToShow: 3,
     slidesToScroll: 1,
     edgeFriction: 0,
@@ -18,6 +18,12 @@ var recurrent_nodes = {
    num_cajas: document.getElementById('num_cajas')
 }
 var cub_item = null;
+var carrusel_meta = {
+  show_each: 10,
+  piso: {carousel_node: $('div#pisos_carousel'), last_item_index: 0, items: []},
+  muro: {carousel_node: $('div#muros_carousel'), last_item_index: 0, items: []}
+}
+
 
 //dropdown menu
 $( document ).ready(function(){
@@ -147,26 +153,18 @@ $('a.category-link').on('click', function(e){
     }
   }).done(function(data, textStatus, jqXHR) {
       console.log(data);
-      var carousel;
 
-      if (data.carousel_type == 'piso')
-        carousel = $('div#pisos_carousel');
-      else if(data.carousel_type == 'muro')
-        carousel = $('div#muros_carousel');
-      else
-        carousel = null;
-
-      if (carousel !== null) {
-        // Quitar todos los elementos del carrusel
-        carousel.slick('removeSlide', null, null, true);
-
-        // Luego agregarlos.
-        for (var i = 0; i < data.carousel_items.length; i++) {
-          carousel.slick('slickAdd', data.carousel_items[i]);
-        }
+      if (data.carousel_type == 'piso'){
+        carrusel_meta.piso.items = data.carousel_items;
+        carrusel_meta.piso.last_item_index = 0;
+      }
+      else if(data.carousel_type == 'muro'){
+        carrusel_meta.muro.items = data.carousel_items;
+        carrusel_meta.muro.last_item_index = 0;
       }
 
-        $('#loading_app').fadeOut(500);
+      updateCarousel(data.carousel_type, true);
+      $('#loading_app').fadeOut(500);
 
   }).fail(function(jqXHR, textStatus, errorThrown) {
     error_json = jqXHR.responseJSON;
@@ -176,6 +174,43 @@ $('a.category-link').on('click', function(e){
     $('a.category-link').toggleClass('disable_link');
      $(document).click();
   });
+});
+
+// Evento que se dispara despues de hacer el cambio de item (o slide) del carrusel.
+$('div.slick-carousel').on('afterChange', function(event, slick, currentSlide, nextSlide){
+  // Se guarda que tipo de carrusel (piso o muro) se esta usando,
+  // con el nombre del id del DIV contenedor.
+  var items_count = 0;
+  var type = null;
+  if (event.currentTarget.id === 'pisos_carousel'){
+    type = 'piso';
+    items_count = carrusel_meta.piso.items.length;
+  }
+  else if (event.currentTarget.id === 'muros_carousel'){
+    type = 'muro';
+    items_count = carrusel_meta.muro.items.length;
+  }
+
+  // console.log("posicion " + (currentSlide + slick.options.slidesToShow));
+
+  if (type !== null) {
+    // Se verifica si quedan productos por agregar al carrusel,
+    if (items_count !== slick.slideCount) {
+      // Se agregaran los siguientes n items (carrusel_meta.show_each) si
+      // la siguiente posicion del carrusel es la ultima (sgte_pos + slidesToShow).
+      if (currentSlide + slick.options.slidesToShow >= slick.slideCount) {
+        console.log("Traer mas");
+        updateCarousel(type, false);
+
+      }else{
+        console.log("Aun no");
+      }
+    }else{
+      console.log("Ya se agregaron todos los items al carrusel");
+    }
+  }else{
+    console.error("No se pudo determinar cual carrusel.");
+  }
 });
 
 // Envio de formulario del carrito de pisos y muros gustados.
@@ -351,6 +386,42 @@ function sendToCarritoAjax(data, url)
   }).always(function(data, textStatus, errorThrown) {
 
   });
+}
+
+// Funcion que agrega n items (carrusel_meta.show_each) al carrusel.
+// type = si es piso o muro
+// delete_all = si hay que borrar los items del carrusel
+// solamente los borra cambiar de categoria.
+function updateCarousel(type, delete_all)
+{
+  var meta_temp = null;
+  var limit = 0;
+
+  if (type === 'piso') 
+    meta_temp = carrusel_meta.piso;
+  else if (type === 'muro')
+    meta_temp = carrusel_meta.muro;
+
+  if (meta_temp !== null) {
+    // Borrar todos los items del carrusel si delete_all == true.
+    if (delete_all)
+      meta_temp.carousel_node.slick('removeSlide', null, null, true);
+
+    // Calcular hasta donde se recorrera el array de productos.
+    if (meta_temp.last_item_index + carrusel_meta.show_each >= meta_temp.items.length) {
+      limit = meta_temp.items.length;
+    }else{
+      limit = meta_temp.last_item_index + carrusel_meta.show_each;
+    }
+    
+    // Se itera el array de productos para agregarlos al carrusel hasta el limit.
+    for (var i = meta_temp.last_item_index; i < limit; i++) {
+      meta_temp.carousel_node.slick('slickAdd', meta_temp.items[i]);
+    }
+    // Asignar la ultima posicion.
+    meta_temp.last_item_index = i;
+  }
+  console.log(carrusel_meta);
 }
 
 // Funcion que revisa si existe un par de productos gustados en el carrito antes de agregar un nuevo par para evitar duplicados.
