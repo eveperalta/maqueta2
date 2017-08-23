@@ -81,7 +81,7 @@ class API
 		# A REVISAR:
 		# Cambiar el get_params[:categoria_id] de array a string, en caso de que no se quiera obtener todos los productos de todas las categorias.
 		# get_params = {categoria_id: [params[:categoria_id]]}
-		category_obj = Category.find_by(sodimac_id: params[:categoria_id])
+		category_obj = Category.find_by(sodimac_id: params[:categoria_id], tipo: params[:category_type])
 		numero_tienda = Config.getNumeroTienda
 
 		if !numero_tienda.nil?

@@ -23,7 +23,7 @@ class MainController < ApplicationController
 			if params[:category_id].present?
 				items = API.getProductsByCategory(categoria_id: params[:category_id], category_type: params[:category_type], category_name: params[:category_name])
 
-				category_obj = Category.select(:nombre).find_by(sodimac_id: params[:category_id])
+				category_obj = Category.select(:nombre).find_by(sodimac_id: params[:category_id], tipo: params[:category_type])
 
 				if !items.nil?
 					html_item_arr = []
