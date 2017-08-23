@@ -17,5 +17,5 @@
 //= require materialize.min
 //= require validar_rut
 //= require jquery.rut.min
-//= require slick.min
+//= require slick
 //= require base

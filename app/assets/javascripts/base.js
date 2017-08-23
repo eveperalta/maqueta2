@@ -392,10 +392,18 @@ function updateCarousel(type, delete_all, arrow_dir)
       limit = meta_temp.last_item_index + carrusel_meta.show_each;
     }
     
+    var date1 = new Date();
+    var ar_tmp = [];
+    // Optimizar esto...
     // Se itera el array de productos para agregarlos al carrusel hasta el limit.
     for (var i = meta_temp.last_item_index; i < limit; i++) {
-      meta_temp.carousel_node.slick('slickAdd', meta_temp.items[i]);
+      ar_tmp.push(meta_temp.items[i]);
+      // meta_temp.carousel_node.slick('slickAdd', meta_temp.items[i]);
     }
+    meta_temp.carousel_node.slick('slickAdd', ar_tmp);
+
+    var date2 = new Date();
+    console.log("Se agrego en " + (date2 - date1) + " ms");
 
     // Hay que volver a obtener la referencia del boton de sgte | prev,
     // debido que al momento de agregar o borrar elementos del carrusel, este se 
