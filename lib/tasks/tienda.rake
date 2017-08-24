@@ -2,7 +2,8 @@ namespace :tienda do
 	desc "Pobla la tabla de tiendas, con los numeros de tienda y nombres que tiene Sodimac."
 	task :llenar_tiendas => :environment do
 		tiendas = [
-			{numero: 96, nombre: "Tobalaba"}
+			{numero: 96, nombre: "Tobalaba"},
+			{numero: 738, nombre: "Dominico"}
 		]
 
 		Config.setTiendaInitConfig
@@ -30,8 +31,9 @@ namespace :tienda do
 				end
 
 			end
-
 		end
+
+		Config.resetTiendaConfig
 	end
 
 	desc "Se asigna la tienda de Sodimac dado su numero."
@@ -75,6 +77,12 @@ namespace :tienda do
 			puts "Reset de configuracion de tienda hecho exitosamente."
 		end
 		
+	end
+
+	task :set_tienda, [:num_tienda, :nombre_tienda] => [:environment] do |t, args|
+		tienda_obj = Tienda.new(t)
+
+
 	end
 
 end

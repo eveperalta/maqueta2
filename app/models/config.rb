@@ -27,4 +27,13 @@ class Config < ActiveRecord::Base
 	def self.getNumeroTienda
 		return getTiendaConfig.tienda.numero if !checkTiendaConfig
 	end
+
+	def self.resetTiendaConfig
+		config_tienda = getTiendaConfig
+
+		if !config_tienda.nil?
+			config_tienda.tienda_id = nil
+			config_tienda.save
+		end
+	end
 end
