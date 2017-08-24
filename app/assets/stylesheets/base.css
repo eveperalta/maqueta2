@@ -398,3 +398,7 @@ span.slick-carousel-badge{
   color: #E10024 !important;
   border-radius: 14px !important; 
 }
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

@@ -644,9 +644,37 @@ function validateImpresionData(data)
 $('div#carrito_container').on('change', 'input.cantidad-item', function(event){
   var input_val = parseInt($(this).val());
   if (isNaN(input_val) || input_val < 1) {
+    $(this).parent('div').find('button.cantidad-rem-btn').addClass('disabled');
     $(this).val(1);
   }
   updateTotal();
+});
+
+// Evento de click en '-' de la cantidad de producto en el carrito.
+$('div#carrito_container').on('click', 'button.cantidad-rem-btn', function(event){
+  event.preventDefault();
+
+  var input = $(this).parent('div').find('input[type=number]');
+  var next_val = parseInt(input.val()) - 1;
+
+  if (next_val <= parseInt(input.attr('min')))
+    $(this).addClass('disabled');
+
+  input.val(next_val).change();
+});
+
+// Evento de click en '+' de la cantidad de producto en el carrito.
+$('div#carrito_container').on('click', 'button.cantidad-add-btn', function(event){
+  event.preventDefault();
+
+  var input = $(this).parent('div').find('input[type=number]');
+  var rem_btn = $(this).parent('div').find('button.cantidad-rem-btn');
+  var next_val = parseInt(input.val()) + 1;
+
+  if (next_val >= parseInt(input.attr('min')))
+    rem_btn.removeClass('disabled');
+
+  input.val(next_val).change();
 });
 
 // Validar que el usuario cambie la cantidad de m2 del cubicador con valores inadecuados, los cambia a 1.
