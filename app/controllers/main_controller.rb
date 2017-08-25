@@ -21,25 +21,25 @@ class MainController < ApplicationController
 	def products_by_category
 		if params[:category_type].present?
 			if params[:category_id].present?
-				items = API.getProductsByCategory(categoria_id: params[:category_id], category_type: params[:category_type], category_name: params[:category_name])
+				res = API.getProductsByCategory(categoria_id: params[:category_id], category_type: params[:category_type], category_name: params[:category_name])
 
-				category_obj = Category.select(:nombre).find_by(sodimac_id: params[:category_id], tipo: params[:category_type])
+				# category_obj = Category.select(:nombre).find_by(sodimac_id: params[:category_id], tipo: params[:category_type])
 
-				if !items.nil?
+				if !res.nil?
 					html_item_arr = []
-					items.each_with_index do |item, index|
-						html_item_arr << render_to_string(partial: 'carousel_items', formats: [:html], layout: false, locals: {item: item, type: Product.new, index: index, category: category_obj})
+					res[:products].each_with_index do |item, index|
+						html_item_arr << render_to_string(partial: 'carousel_items', formats: [:html], layout: false, locals: {item: item, type: Product.new, index: index, category: res[:category_obj]})
 					end
 
 					render json: {
 						carousel_items: html_item_arr,
-						carousel_type: params[:category_type]
+						carousel_type: params[:category_type],
+						source: res[:source],
+						last_updated_at: res[:category_obj].last_api_used
 					}
-
 				else
 					# Hubo un error al obtener los productos de la categoria.
-					render json: {msg: "Hubo un error en obtener los productos de la categoria '#{params[:category_id]}'"}, status: :unprocessable_entity
-							
+					render json: {msg: "Hubo un error en obtener los productos de la categoria '#{params[:category_id]}'"}, status: :unprocessable_entity	
 				end		
 			else
 				# No hay id de categoria.

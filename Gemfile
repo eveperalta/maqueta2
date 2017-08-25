@@ -39,6 +39,12 @@ gem 'rut_chileno'
 
 gem 'delayed_job_active_record'
 
+# CRON
+gem 'whenever', :require => false
+
+gem 'bulk_insert'
+
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 

@@ -83,89 +83,70 @@ class API
 		# get_params = {categoria_id: [params[:categoria_id]]}
 		category_obj = Category.find_by(sodimac_id: params[:categoria_id], tipo: params[:category_type])
 		numero_tienda = Config.getNumeroTienda
+		response = {products: nil, source: nil, category_obj: category_obj}
 
 		if !numero_tienda.nil?
 			if !category_obj.nil?
-				products = []
-				products_failed = []
-				offset = 0
-				# Traer cada (limit) productos.
-				limit = 100
-				pass = true
+				products = []	
+				if !params[:from_cron].nil? && params[:from_cron]
+					# Aqui entra cuando el llamado se realiza desde el cron.
+					products = getProductsFromApi(
+						numero_tienda: numero_tienda,
+						category_obj: category_obj,
+						)
 
-				# Para traer todos productos, hay que variar cada (limit) el offset de la URL hasta encontrar menos productos que el (limit).
-				if category_obj.timeToUseApi()
-					puts "USA API"
-					# Si ha pasado tiempo que no se usa la api (Category::API_TIME_TO_USE),
-					# se hace uso de la api.
-					while pass
-						products_api_url = JSON.parse(HTTP.get("http://api-car.azurewebsites.net:80/Categories/CL/#{numero_tienda}/#{category_obj.sodimac_id}?orderBy=2&%24offset=#{offset}&%24limit=#{limit}").to_s)
+					if products.size != 0
+						if category_obj.products.where(valido: true).size == 0
+							# Cuando la BD no tiene guardados productos con la categoria entrante,
+							# se ingresan todos a la BD.
+							insertProductsToBD(products, category_obj)
+						else
+							# Cuando en la BD ya hay productos guardados con la categoria entrante.
+							# Invalidar todos los productos de la categoria para dejar marcados los posibles productos que ya no deberia existir en la BD (posiblemente porque ya no esta en la API).
+							Product.where(categoria_id: category_obj.id).update_all(valido: false)
 
-						puts "OFFSET -> #{offset} | PRODUCTOS -> #{products_api_url["products"].size}"
-						if products_api_url["products"].size != 0
-							products_api_url["products"].each do |product|
-								product_obj = Product.new(
-									nombre: product["name"],
-									sku: product["sku"],
-									img_url: product["multimedia"].first["url"],
-									descripcion: getDescriptionFromApi(product),
-									precio: product["price"]["normal"],
-									tipo: category_obj.tipo,
-									categoria_id: category_obj.id
-									)
-								# Realizar llamado de la ficha tecnica del producto.
-								ficha_api_url = JSON.parse(HTTP.get("http://api-car.azurewebsites.net/Products/CL/#{numero_tienda}/#{product_obj.sku}/Sheet"))
+							new_products_to_bd = []
+							products.each do |product_api|
+								product_obj = Product.find_by(tipo: category_obj.tipo, sku: product_api.sku)
 
-								if ficha_api_url.kind_of?(Array)
-									# Si el llamado devuelve un array es porque no hubo un problema con el llamado
-									# Se recorre la lista de atributos del producto hasta encontrar el de "rendimiento por caja"
-									ficha_api_url[0]["attributes"].each do |attr|
-										if attr["name"] =~ /rendimiento/i
-											product_obj.rend_caja = attr["value"]
-											break
-										end
-									end
-								end
-
-								# Si el producto cumple las validaciones de la clase, se incluye.
-								if product_obj.valid?
+								if !product_obj.nil?
+									# Si ya esta en la BD, se actualiza solo su precio y se vuelve a dejar como valido.
+									product_obj.precio = product_api.precio
 									product_obj.valido = true
-									products << product_obj
+									product_obj.save
 								else
-									products_failed << product_obj
+									# Si no esta en la BD, se agrega al array de productos nuevos a agregar (new_products_to_bd) para insertarlos mas tarde.
+									new_products_to_bd << product_api
 								end
-							end # each product
-
-							# Si aun quedan productos por traer (si la cantidad de productos obtenidos es el limit),
-							# se le suma "limit" al "offset" y se vuelva a usar la api.
-							if products_api_url["products"].size == limit
-								offset += limit
-							else
-								# No deberian quedar mas productos debido que la cantidad de productos obtenidos es menor que el limit.
-								pass = false
 							end
 
-						else
-							# No se encontraron productos.
-							pass = false
-						end # products_api_url["products"].size != 0
-					end # while(pass)
-					
-					# Una vez que se termino de usar la api, teniendo ya todos los productos,
-					# Se deja corriendo en un JOB la insercion a la BD de estos productos con su categoria
-					# asociada y seteando la fecha/hora de este proceso.
-					if products.size != 0
-						insertProductsToBD(products, category_obj)
-						# ProductApiJob.perform_later(products, category_obj, DateTime.now)
-					end
+							# Agregar los nuevos productos a la BD, solo si hay.
+							insertProductsToBD(new_products_to_bd, category_obj) if new_products_to_bd.size != 0
 
+							category_obj.last_api_used = DateTime.current.in_time_zone
+							category_obj.save
+						end # category_obj.products.size == 0
+					end # products.size != 0
 				else
-					# No es necesario usar la API, se sacan los productos de la BD.
-					puts "USA BD"
-					products = Product.where(categoria_id: category_obj.id).where(valido: 'true')
-				end # category_obj.timeToUseApi(Datetime.now)
+					# Aqui entra cuando se llama desde la pagina, solo se traen los productos de la BD.
+					products = Product.where(categoria_id: category_obj.id).where(valido: true)
 
-				return products
+					if products.size == 0
+						response[:source] = :api
+						# CASO NO IDEAL (deberia haber un problema con el cron), cuando no hay productos en la BD viniendo desde pagina.
+						products = getProductsFromApi(
+							numero_tienda: numero_tienda,
+							category_obj: category_obj,
+						)
+						# Se agregan a la BD.
+						insertProductsToBD(products, category_obj)
+					else
+						response[:source] = :no_api
+					end
+				end # end if cron
+
+				response[:products] = products
+				return response
 			else
 				return nil
 			end
@@ -175,14 +156,91 @@ class API
 	end
 
 	def self.insertProductsToBD(products, category_obj)
-		# Borrar de la BD los productos pasados.
-		Product.delete_all(categoria_id: category_obj.id)
 		# Insertar los nuevos.
-		values = products.map{|p| "('#{p.nombre}','#{p.sku}','#{p.img_url}','#{p.descripcion}','#{p.rend_caja}','#{p.precio}','#{p.tipo}','#{p.rotar}','#{p.cantidad}','#{p.categoria_id}','#{p.superficie}','#{p.valido}')" }.join(",")
-		Product.connection.execute("INSERT INTO #{Product.table_name} (nombre, sku, img_url, descripcion, rend_caja, precio, tipo, rotar, cantidad, categoria_id, superficie, valido) VALUES #{values}")
+		Product.bulk_insert do |worker|
+			products.each do |product|
+				worker.add(product.attributes.except("id"))
+			end
+		end
+
     # Setear la fecha/hora (ahora) de la insercion.
 		category_obj.last_api_used = DateTime.current.in_time_zone
 		category_obj.save
+	end
+
+	def self.getProductsFromApi(options)
+		products = []
+		# products_failed = []
+		offset = 0
+		# Traer cada (limit) productos.
+		limit = 100
+		pass = true
+		tries = 0
+
+		puts "USA API"
+		# EMPIEZA USO DE API.
+		while pass
+			connection = HTTP.get("http://api-car.azurewebsites.net:80/Categories/CL/#{options[:numero_tienda]}/#{options[:category_obj].sodimac_id}?orderBy=2&%24offset=#{offset}&%24limit=#{limit}")
+			products_api_url = JSON.parse(connection.to_s)
+
+			if products_api_url["products"].nil?
+				byebug
+			end
+
+			puts "OFFSET -> #{offset} | PRODUCTOS -> #{products_api_url["products"].size}"
+
+
+			if !products_api_url["products"].nil?
+				products_api_url["products"].each do |product|
+					product_obj = Product.new(
+						nombre: product["name"],
+						sku: product["sku"],
+						img_url: product["multimedia"].first["url"],
+						descripcion: getDescriptionFromApi(product),
+						precio: product["price"]["normal"],
+						tipo: options[:category_obj].tipo,
+						categoria_id: options[:category_obj].id
+						)
+					# Realizar llamado de la ficha tecnica del producto.
+					ficha_api_url = JSON.parse(HTTP.get("http://api-car.azurewebsites.net/Products/CL/#{options[:numero_tienda]}/#{product_obj.sku}/Sheet"))
+
+					if ficha_api_url.kind_of?(Array)
+						# Si el llamado devuelve un array es porque no hubo un problema con el llamado
+						# Se recorre la lista de atributos del producto hasta encontrar el de "rendimiento por caja"
+						ficha_api_url[0]["attributes"].each do |attr|
+							if attr["name"] =~ /rendimiento/i
+								product_obj.rend_caja = attr["value"]
+								break
+							end
+						end
+					end
+
+					# Si el producto cumple las validaciones de la clase, se incluye.
+					if product_obj.valid?
+						product_obj.valido = true
+						products << product_obj
+					# else
+						# products_failed << product_obj
+					end
+				end # each product
+
+				# Si aun quedan productos por traer (si la cantidad de productos obtenidos es el limit),
+				# se le suma "limit" al "offset" y se vuelva a usar la api.
+				if products_api_url["products"].size == limit
+					offset += limit
+				else
+					# No deberian quedar mas productos debido que la cantidad de productos obtenidos es menor que el limit.
+					pass = false
+				end
+
+			else
+				# No se encontraron productos.
+				pass = false
+			end # products_api_url["products"].size != 0
+		end # while(pass)
+		# TERMINO USO DE API.
+
+		return products
 	end
 
 	def self.getFichaProductoBySku(sku, tipo)
