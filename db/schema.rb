@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170818155011) do
+ActiveRecord::Schema.define(version: 20170825015051) do
 
   create_table "categories", force: :cascade do |t|
     t.string   "sodimac_id",    null: false
@@ -25,6 +25,13 @@ ActiveRecord::Schema.define(version: 20170818155011) do
   create_table "config", force: :cascade do |t|
     t.string  "nombre_config", null: false
     t.integer "tienda_id"
+  end
+
+  create_table "cron", force: :cascade do |t|
+    t.integer  "category_id",   null: false
+    t.text     "last_error"
+    t.datetime "last_start_at"
+    t.datetime "last_end_at"
   end
 
   create_table "product", force: :cascade do |t|

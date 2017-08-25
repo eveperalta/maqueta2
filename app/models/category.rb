@@ -14,6 +14,8 @@ class Category < ActiveRecord::Base
 
   validates_presence_of :sodimac_id, :nombre, :tipo, :img, :alt_txt
 	has_many :products, class_name: "Product", foreign_key: :categoria_id, dependent: :delete_all
+	after_create :create_cron
+	before_destroy :eliminate_cron
 
 	def timeToUseApi()
 		today = DateTime.current.in_time_zone
@@ -47,5 +49,13 @@ class Category < ActiveRecord::Base
 
 	def alt_txt=(new_alt_txt)
 		self[:alt_txt] = new_alt_txt.strip if new_alt_txt.present?
+	end
+
+	def create_cron
+    Cron.create(category_id: self.id)
+	end
+
+	def eliminate_cron
+		Cron.find_by(category_id: self.id).delete
 	end
 end
