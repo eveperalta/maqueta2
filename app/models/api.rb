@@ -183,14 +183,12 @@ class API
 			connection = HTTP.get("http://api-car.azurewebsites.net:80/Categories/CL/#{options[:numero_tienda]}/#{options[:category_obj].sodimac_id}?orderBy=2&%24offset=#{offset}&%24limit=#{limit}")
 			products_api_url = JSON.parse(connection.to_s)
 
-			if products_api_url["products"].nil?
-				byebug
-			end
-
-			puts "OFFSET -> #{offset} | PRODUCTOS -> #{products_api_url["products"].size}"
-
+			# if products_api_url["products"].nil?
+			# 	byebug
+			# end
 
 			if !products_api_url["products"].nil?
+				puts "OFFSET -> #{offset} | PRODUCTOS -> #{products_api_url["products"].size}"
 				products_api_url["products"].each do |product|
 					product_obj = Product.new(
 						nombre: product["name"],
