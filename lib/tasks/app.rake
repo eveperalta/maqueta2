@@ -10,8 +10,13 @@ namespace :app do
 			alt_txt: args[:alt_txt]
 			)
 
-		if cat_obj.save
-			puts "Categoria agregada exitosamente id: #{cat_obj.id}"
+		if cat_obj.valid?
+			if Category.find_by(sodimac_id: cat_obj.sodimac_id, tipo: cat_obj.tipo).nil?
+				cat_obj.save
+				puts "Categoria agregada exitosamente id: #{cat_obj.id}"
+			else
+				puts "La categoria ingresada ya existe."
+			end
 		else
 			puts "Ha ocurrido un problema en agregar la categoria"
 			puts cat_obj.errors.messages
@@ -27,7 +32,7 @@ namespace :app do
 			# Borrar los productos asociados a la categoria
 			cat_obj.products.delete_all
 			# Borrar categoria
-			cat_obj.delete
+			cat_obj.destroy
 			puts "Categoria eliminada exitosamente."
 		else
 			puts "La categoria ingresada '#{args[:sodimac_id]}' no existe en el sistema."
@@ -38,7 +43,6 @@ namespace :app do
 	task :run_cron_job => :environment do
 		Rails.logger.level = Logger::DEBUG
 		crons = Cron.all
-		# crons = Cron.where(category_id: 4)
 
 		crons.each do |cron|
 			puts "Actualizando #{cron.category.nombre} | #{cron.category.sodimac_id}"
