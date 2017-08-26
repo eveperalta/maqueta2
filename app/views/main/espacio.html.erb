@@ -1,3 +1,7 @@
+<%= content_for :css do %>
+  <%= stylesheet_link_tag 'new_windows', media: 'all', 'data-turbolinks-track' => true, 'data-only_window' => true %>
+<% end -%>
+
 <!-- Dropdown Structure -->
 <ul id="dropdown1" class="dropdown-content">
   <%= form_for(carrito, url: carito_send_path, html: {id: 'carrito_form', format: :json}) do |f| %>

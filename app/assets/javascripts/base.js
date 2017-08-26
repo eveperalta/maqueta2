@@ -649,9 +649,18 @@ function validateImpresionData(data)
 }
 
 // Inicializa y abre las ventanas de piso y muros.
-function initWindows() 
+function initWindows(only)
 {
-  var ws = Object.keys(windows);
+  // Obtener el link css para agregarlo a las ventanas.
+  var links = document.getElementsByTagName("link");
+  var css = null;
+  for (var i = 0; i < links.length; i++) 
+  {
+    if (links[i].dataset.only_window !== undefined && links[i].dataset.only_window)
+      css = links[i];
+  }
+
+  var ws = only !== undefined ? [only] : Object.keys(windows);
   for (var i = 0; i < ws.length; i++) 
   {
     windows[ws[i]] = window.open("", ws[i] + "_window", 'width=window.innerWidth,height=window.innerHeight');
@@ -659,6 +668,9 @@ function initWindows()
 
     if (windows[ws[i]].document.body.innerHTML.length !== 0)
       windows[ws[i]].document.body.innerHTML = '';
+
+    if (css !== null)
+      $(windows[ws[i]].document.head).append($(css).clone());
   }
 }
 
@@ -673,6 +685,14 @@ $(window).unload(function() {
 function setImageToWindow(type, img_node)
 {
   if (type !== null && img_node !== undefined) {
+    // Si la ventana donde se agregara la imagen se encuentra cerrada,
+    // se vuelve a inicializar y abrir la ventana.
+    if (windows[type].closed)
+      initWindows(type);
+
+    img_node.style.width = '100%';
+    img_node.style.height = '100%';
+
     if (type === 'piso')
       windows.piso.document.body.innerHTML = img_node.outerHTML;
     else if(type === 'muro')
@@ -871,14 +891,14 @@ $('div.slick-carousel').on('click', 'button.set_background', function(event){
     hidden_el = document.getElementById('muro_img_url');
     rotar_hidden = document.getElementById('muro_rotar');
     j_selector = '#muro_img_url';
-    type = 'piso';
+    type = 'muro';
 
   }else if(carousel_container === 'pisos_carousel'){
     // Setear los valores de los input hidden de pisos.
     hidden_el = document.getElementById('piso_img_url');
     rotar_hidden = document.getElementById('piso_rotar');
     j_selector = '#piso_img_url';
-    type = 'muro';
+    type = 'piso';
   }
 
   if (hidden_el !== null) {
