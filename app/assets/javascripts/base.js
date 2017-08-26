@@ -25,7 +25,14 @@ var carrusel_meta = {
   piso: {carousel_node: $('div#pisos_carousel'), last_item_index: 0, items: []},
   muro: {carousel_node: $('div#muros_carousel'), last_item_index: 0, items: []}
 }
+var windows = {
+  piso: null,
+  muro: null
+}
 
+String.prototype.capitalize = function() {
+  return this.charAt(0).toUpperCase() + this.slice(1);
+}
 
 //dropdown menu
 $( document ).ready(function(){
@@ -80,6 +87,8 @@ $( document ).ready(function(){
   });
 
   $('.materialboxed').materialbox();
+
+  initWindows();
 });
 
 $('a.dropdown-button').on('click', function(e){
@@ -639,6 +648,38 @@ function validateImpresionData(data)
   return pass;
 }
 
+// Inicializa y abre las ventanas de piso y muros.
+function initWindows() 
+{
+  var ws = Object.keys(windows);
+  for (var i = 0; i < ws.length; i++) 
+  {
+    windows[ws[i]] = window.open("", ws[i] + "_window", 'width=window.innerWidth,height=window.innerHeight');
+    windows[ws[i]].document.title = ws[i].capitalize();
+
+    if (windows[ws[i]].document.body.innerHTML.length !== 0)
+      windows[ws[i]].document.body.innerHTML = '';
+  }
+}
+
+// Quitar la imagenes de las ventanas al cerrar la pagina.
+$(window).unload(function() {
+  windows.piso.close();
+  windows.muro.close();
+});
+
+// Asigna la imagen a su respectiva ventana cuando el usuario
+// hace click en el boton del ojo del carrusel.
+function setImageToWindow(type, img_node)
+{
+  if (type !== null && img_node !== undefined) {
+    if (type === 'piso')
+      windows.piso.document.body.innerHTML = img_node.outerHTML;
+    else if(type === 'muro')
+      windows.muro.document.body.innerHTML = img_node.outerHTML;
+  }
+}
+
 // Cada vez que se cambia la cantidad de cada item del carrito, se actualiza su precio total.
 // Tambien previene que el usuario cambie valores inadecuados del input, los cambia a 1.
 $('div#carrito_container').on('change', 'input.cantidad-item', function(event){
@@ -822,19 +863,22 @@ $('div.slick-carousel').on('click', 'button.set_background', function(event){
   var hidden_el = null;
   var rotar_hidden = null;
   var j_selector = "";
+  var img_node = $(this).parents('div.slick-slide').find('img');
+  var type = null
 
   if (carousel_container === 'muros_carousel') {
     // Setear los valores de los input hidden de muros.
     hidden_el = document.getElementById('muro_img_url');
     rotar_hidden = document.getElementById('muro_rotar');
     j_selector = '#muro_img_url';
+    type = 'piso';
 
   }else if(carousel_container === 'pisos_carousel'){
     // Setear los valores de los input hidden de pisos.
     hidden_el = document.getElementById('piso_img_url');
     rotar_hidden = document.getElementById('piso_rotar');
     j_selector = '#piso_img_url';
-
+    type = 'muro';
   }
 
   if (hidden_el !== null) {
@@ -849,6 +893,8 @@ $('div.slick-carousel').on('click', 'button.set_background', function(event){
     $(j_selector).click();
   }
 
+  // Setear la imagen a su ventana correspondiente.
+  setImageToWindow(type, img_node[0])
 });
 
 
