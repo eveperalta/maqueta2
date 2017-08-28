@@ -58,4 +58,19 @@ class Category < ActiveRecord::Base
 	def eliminate_cron
 		Cron.find_by(category_id: self.id).delete
 	end
+
+	def self.initCategories
+  	if self.all.size == 0
+  		puts "No hay categorias, cargando..."
+  		CATEGORIES.each do |cat|
+  			cat_obj = self.create(cat)
+  			if cat_obj.present?
+  				puts "Categoria '#{cat_obj.nombre}' agregada exitosamente, ID: #{cat_obj.id}"
+  			else
+  				puts "Fallo categoria '#{cat_obj.nombre}'"
+  				puts cat_obj.errors.messages
+  			end
+  		end
+		end
+	end
 end

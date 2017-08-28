@@ -1,14 +1,10 @@
 namespace :tienda do
 	desc "Pobla la tabla de tiendas, con los numeros de tienda y nombres que tiene Sodimac."
 	task :llenar_tiendas => :environment do
-		tiendas = [
-			{numero: 96, nombre: "Tobalaba"},
-			{numero: 738, nombre: "Dominico"}
-		]
 
 		Config.setTiendaInitConfig
 
-		tiendas.each do |t|
+		Tienda::TIENDAS.each do |t|
 			tienda_obj = Tienda.find_by(numero: t[:numero])
 
 			if tienda_obj.nil?
