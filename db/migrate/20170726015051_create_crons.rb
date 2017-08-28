@@ -7,9 +7,9 @@ class CreateCrons < ActiveRecord::Migration
     	t.datetime :last_end_at, null: true
     end
 
-    cats = Category.all
-    cats.each do |c|
-    	Cron.create(category_id: c.id)
-    end
+    # cats = Category.all
+    # cats.each do |c|
+    # 	Cron.create(category_id: c.id)
+    # end
   end
 end

@@ -1,6 +1,13 @@
+# Se verifica si la tabla existe en cada verificacion para que no tenga problemas al correr las migraciones.
 # Verificar que este la config de tiendas.
-Config.setTiendaInitConfig
+if ActiveRecord::Base.connection.table_exists?(Config.table_name)
+	Config.setTiendaInitConfig
+end
 # Verificar que la app tengan las tiendas iniciales cargadas.
-Tienda.initTiendas
+if ActiveRecord::Base.connection.table_exists?(Tienda.table_name)
+	Tienda.initTiendas
+end
 # Verificar que la app tengan las categorias iniciales cargadas.
-Category.initCategories
+if ActiveRecord::Base.connection.table_exists?(Category.table_name)
+	Category.initCategories
+end
