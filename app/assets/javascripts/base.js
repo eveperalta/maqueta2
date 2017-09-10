@@ -56,7 +56,8 @@ $( document ).ready(function(){
   $('#modal1').modal();
   $('#modal2').modal({
       complete: function() {
-        redirectToHome();
+        clearCarrito();
+        resetBadge();
       }
     });
   $('#modal3').modal({
