@@ -12,10 +12,16 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery-ui.min
 //= require jquery-migrate-1.3.0.min
 //= require turbolinks
 //= require materialize.min
 //= require validar_rut
 //= require jquery.rut.min
 //= require slick
+//= require jquery.keyboard
+//= require jquery.mousewheel
+//= require jquery.keyboard.extension-typing
+//= require jquery.keyboard.extension-extender
+//= require spanish
 //= require base

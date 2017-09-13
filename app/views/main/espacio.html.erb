@@ -26,7 +26,7 @@
     <button class="close" id="close-modal1"><i class="material-icons">close</i></button>
     <h4>Ingresa tu correo </h4>
     <div class="input-field col s12">
-      <input type="email", class="validate", placeholder="Email", id="email_modal">
+      <input type="email", class="validate vk1", placeholder="Email", id="email_modal">
     </div>
   </div>
   <div class="modal-footer">
@@ -63,13 +63,13 @@
     <button class="close" id="close-modal4"><i class="material-icons">close</i></button>
     <h4>Por favor llene los campos antes de enviar a impresión.</h4>
     <div class="input-field col s12">
-      <input type="email", class="validate", placeholder="Email", id="imp_email">
+      <input type="email", class="validate vk1", placeholder="Email", id="imp_email">
     </div>
     <div class="input-field col s12">
-      <input type="text", class="validate", placeholder="Nombre", id="imp_nombre">
+      <input type="text", class="validate vk1", placeholder="Nombre", id="imp_nombre">
     </div>
     <div class="input-field col s12">
-      <input type="text", class="validate", placeholder="Rut", id="imp_rut" maxlength="12">
+      <input type="text", class="validate vk2", placeholder="Rut", id="imp_rut" maxlength="12">
     </div>
   </div>
   <div class="modal-footer">
@@ -88,7 +88,7 @@
         <%= f.hidden_field(:piso, value: nil, id: nil, class: 'cubicador_field') %>
         <%= f.hidden_field(:superficie, value: nil, id: nil, class: 'cubicador_field') %>
         <i class="material-icons prefix">select_all</i>
-        <%= f.number_field(:m2, value: 1, min: 1, class: 'center-align m2_cub cubicador_field', id: nil) %>
+        <%= f.number_field(:m2, value: 1, min: 1, class: 'center-align m2_cub cubicador_field vk3', id: nil) %>
         <label for="icon_prefix2">M2</label>
         <%= f.submit("Calcular", class: 'btn input-field') %>
       <% end -%>

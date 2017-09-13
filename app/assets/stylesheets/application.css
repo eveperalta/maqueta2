@@ -15,6 +15,7 @@
  *= require benchnine
  *= require slick
  *= require slick-theme
+ *= require keyboard
+ *= require jquery-ui.min
  *= require base
-
  */

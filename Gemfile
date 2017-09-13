@@ -43,7 +43,7 @@ gem 'delayed_job_active_record'
 gem 'whenever', :require => false
 
 gem 'bulk_insert'
-
+gem 'virtual_keyboard'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
