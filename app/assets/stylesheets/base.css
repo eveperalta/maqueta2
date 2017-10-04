@@ -278,11 +278,11 @@ i.carrito-icon{
 
 /*cambiar color a los botones*/
 .waves-effect{
-  background-color: #006BB1 !important;
-  color: #fff !important;
+  background-color: #fff !important;
+  color: #000 !important;
 }
 .btn-small{
-  background-color: #006BB1 !important;
+  background-color: #fff !important;
 }
 
 .seleccione_text_default
