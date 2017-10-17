@@ -53,7 +53,7 @@ class Pdf < Prawn::Document
     bounding_box([bounds.left, cursor], width: @right_limit) do
       indent(INDENT_TYPE1) do
         text("Estimado cliente:", TEXT_CONFIG)
-        text("Te enviamos un recordatorio de la experiencia en Pisos & Muros en tu tienda Sodimac Favorita, estas fueron tus selecciones:", TEXT_CONFIG)
+        text("Te enviamos un recordatorio de la experiencia Pisos & Muros en tu tienda Sodimac Favorita, estas fueron tus selecciones:", TEXT_CONFIG)
       end
     end
     move_down 20
