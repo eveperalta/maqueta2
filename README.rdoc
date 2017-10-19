@@ -1,0 +1,25 @@
+== README
+
+Antes de instalar el proyecto principal en el servidor es necesario tener instalado previamente, tanto en el servidor como en las maquinas virtuales lo siguiente:
+
+- Git
+- Ruby o RVM
+- Gema 'bundler'
+- Gema 'rails' -> '4.2.6'
+- NPM
+- NPM 'wallpaper' (https://github.com/sindresorhus/wallpaper-cli)
+
+Luego instalar lo siguiente solo en el servidor:
+
+- Software para máquinas virtuales (puede ser cualquiera como Virtual Vox o VMWare)
+- Emular 2 maquinas virtuales en el servidor.
+- Instalar Windows (7 en adelante) o Ubuntu en cada maquina virtual.
+- Tener configurado los proyectores, de forma de que cada proyector muestre una de las pantallas de su respectiva maquina virtual. Ejemplo: El proyector X debe mostrar el escritorio de la maquina virtual X y el proyector Y debe mostrar el escritorio de la maquina virtaul Y.
+
+Una vez instalado lo mencionado, se puede pasar a hacer clon en el repositorio del proyecto en el servidor:
+
+https://github.com/eveperalta/maqueta2
+
+Luego que se haya clonado el repositorio en el servidor, dentro de cada maquina virtual se le debe hacer clon al siguiente repositorio:
+
+-- CREAR GITHUB CON REPOSITORIO A INSTALAR EN LAS MAQUINAS VIRTUALES --

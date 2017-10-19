@@ -1,0 +1,16 @@
+<% carrito.items.each do |item| %>
+  <%= fields_for("items[]", item) do |ff| %>
+    <li class="valign-wrapper" data-product-sku="<%= item.sku %>" data-product-price="<%= item.precio %>">
+      <%= ff.hidden_field(:sku, value: item.sku) %>
+      <%= ff.hidden_field(:tipo, value: item.tipo) %>
+      <div class="col s2 offset-s1">
+        <button type="button" class="waves-effect  btn-flat cantidad-rem-btn <% if item.cantidad == 1 %> disabled <% end %>"><i class="material-icons">remove</i></button>
+        <%= ff.number_field(:cantidad, value: item.cantidad, min: 1, class: 'cantidad-item center-align') %>
+        <button type="button" class="waves-effect  btn-flat cantidad-add-btn"><i class="material-icons">add</i></button>
+      </div>
+      <div class="col s2 offset-s1">
+      	<label class="input-field center-align"><%= item.tipo.to_s.titleize %> sku: <%= item.sku %> | Precio: $ <%= number_with_delimiter(item.precio, :delimiter => ',') %></label >
+			</div>
+    </li>
+  <% end -%>
+<% end -%>

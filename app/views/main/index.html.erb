@@ -1,0 +1,27 @@
+<div id="loading_app_inicial" style="display:block;z-index:2;position:absolute;top:0;bottom:0;background-color:rgba(0, 0, 0, 0.3);width:100%; ">
+  <div class="spinner">
+    <div class="dot1"></div>
+    <div class="dot2"></div>
+  </div>
+
+</div>
+<div class="back imgBack" >
+
+  <img id="fondoInicial" src="http://pisosymuros.triplea.cl/images/Fondos/piso-23.jpg" style="display:none;position:absolute;top:0;width: 100vw;
+  height: 100vh;
+  object-fit: cover;object-fit: cover;z-index:-1;"/>
+ <div class="container" style="z-index:1;display:none;" id="content_pantalla_inicio">
+    <div class="row">
+      <div class="col s12 m12 l12 xl12 center-align">
+        <h1 class="flowtext">Te Invitamos a combinar</h1>
+        <h2 class="flowtext">Pisos y Muros</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 m12 l12 xl12 center-align">
+        <%= link_to("Continuar", espacio_path, class: "btn waves-effect waves-ligth")  %>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+	<meta name="tienda_config" value="<%= @tienda_config %>">
+  <title>Pisos & Muros</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= yield :css %>
+  <%= csrf_meta_tags %>
+</head>
+
+<body>
+	<div id="modal3" class="modal">
+    <div class="modal-content">
+      <h4>La página no tiene una tienda de Sodimac asociada, seleccione una.</h4>
+			<%= form_for(@config_obj, url: set_tienda_path, html: {id: 'tienda_form', format: :json}) do |f| %>
+				<div class="col s6">
+					<%= f.label :tienda %>
+					<%= f.collection_select(:tienda_id, @tiendas, :numero, :nombre, {}, {class: 'input-field tienda-sel'}) %>
+				</div>
+
+				<div class="actions text-center center-align">
+					<%= f.submit 'Guardar', class: 'btn btn-primary' %>
+				</div>
+			<% end %>
+		</div>
+  </div>
+
+	<%= yield %>
+
+	<%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+	<%= yield :javascript %>
+
+	<%= button_tag(:img_url, type: 'button', id: 'piso_img_url', class: 'hide', value: nil) %>
+	<%= button_tag(:rotar, type: 'button', id: 'piso_rotar', class: 'hide', value: nil) %>
+
+	<%= button_tag(:img_url, type: 'button', id: 'muro_img_url', class: 'hide', value: nil) %>
+	<%= button_tag(:rotar, type: 'button', id: 'muro_rotar', class: 'hide', value: nil) %>
+
+	<%= button_tag(:goHome_App, type: 'button', id: 'goHome_App', class: 'hide', value: nil) %>
+</body>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-104088643-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+</html>

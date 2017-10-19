@@ -1,0 +1,136 @@
+/*INDEX*/
+@font-face
+{
+   font-family: "miso";
+   src: url("miso.eot");
+   src: url("miso.eot?#amomiso") format("embedded-opentype"),
+        url("miso.woff") format("woff"),
+        url("miso.ttf") format("truetype"),
+        url("miso.svg#IDdelafuente") format("svg");
+}
+p{
+  line-height: 150%;
+  font-family: "miso";
+  font-size: 14px;
+}
+h1 {
+font-family:’miso.eot’;
+font-weight: bold;
+font-size: 56px;
+color: #000;
+margin-top: 180px;
+}
+h5{
+  font-family:’miso.eot’;
+  font-weight: bold;
+  font-size: 36px;
+  color: #fff;
+  margin-top: 80px;
+}
+.btn{
+  background-color: #1176BD;
+}
+
+.back{
+  background-image: url(../img/mt1.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: auto;
+  background-position: left;
+  height:1024px;
+}
+/*--------------------------espacios---------------*/
+nav{
+  background-color: #EE192C;
+}
+.dropdown-button{
+  margin-right: 20px;
+}
+.car{
+  color: #fff;
+}
+.fondo{
+    background-image: url(../img/mesamadera.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: auto;
+    background-position: center;
+    height:auto;
+
+
+}
+.brand-logo img{
+  width: 45px;
+  height: 40px;
+  margin-top: 5px;
+}
+.left-sidebar {
+	width: 300px;
+	height: 100%;
+	bottom: 0;
+	position: absolute;
+	left: 0;
+	/*background-color: #e5d858;*/
+}
+a {
+	font-size: 14px;
+	color: #fff;
+	text-decoration: none;
+	display: block;
+	transition: all 0.3s ease;
+}
+a:hover  {
+font-size:26px;
+transition: all 0.3s ease;
+color: #1176BD;
+}
+h5:hover {
+font-size: 40px;
+transition: all 0.3s ease;
+color: #1176BD;
+}
+.main-container {
+	height: 100%;
+	width: 100%;
+	margin-left: 300px;
+}
+
+.section {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.circle{
+  width: 100px;
+  height: 100px;
+  margin-top: 20px;
+  margin-left: -20px;
+}
+#dos{
+margin-left: 25px;
+}
+.segundo{
+  margin-top: 10px;
+}
+.title{
+  margin-left: 42px;
+  text-align: center;
+  font-size: 18px;
+  font-family: "miso"
+}
+span{
+  font-size: 18px;
+  margin-left: -10px;
+  font-family: "miso"
+}
+/*---------------------------------CARRUSEL-------------*/
+.card{
+  position: absolute;
+  left: 30px;
+  top: 30px;
+  width: 75%;
+  font-size: 20px;
+  font-family: "miso"
+}
