@@ -190,10 +190,29 @@ class API
 			if !products_api_url["products"].nil?
 				puts "OFFSET -> #{offset} | PRODUCTOS -> #{products_api_url["products"].size}"
 				products_api_url["products"].each do |product|
+<<<<<<< HEAD
 					product_obj = Product.new(
 						nombre: product["name"],
 						sku: product["sku"],
 						img_url: product["multimedia"].first["url"],
+=======
+                                        mejor_imagen = product["multimedia"].first["url"]
+                                        product["multimedia"].each do |mm|
+                                           if mm["url"].end_with? "_17"
+                                               mejor_imagen = mm["url"]
+                                           end
+                                        end
+                                        product["multimedia"].each do |mm|
+                                           if mm["url"].end_with? "_01"
+                                               mejor_imagen = mm["url"]
+                                           end
+                                        end
+                                        mejor_imagen = mejor_imagen + "?wid=2000"
+					product_obj = Product.new(
+						nombre: product["name"],
+						sku: product["sku"],
+						img_url: mejor_imagen,
+>>>>>>> 981e663641180cb30026d7cbc87eecd568fdf204
 						descripcion: getDescriptionFromApi(product),
 						precio: product["price"]["normal"],
 						tipo: options[:category_obj].tipo,
@@ -316,7 +335,11 @@ class API
 
 		if cub_res.code == 200
 			# Todo ok, solo se devuelve la cantidad de cajas.
+<<<<<<< HEAD
 			return JSON.parse(cub_res.to_s)["piso"]["cantidad"]
+=======
+			return (data[:m2].to_f / JSON.parse(cub_res.to_s)["piso"]["rendimiento"].gsub(/\r\n/,"").to_f).ceil
+>>>>>>> 981e663641180cb30026d7cbc87eecd568fdf204
 		else
 			# Mal.
 			return nil

@@ -19,3 +19,5 @@
 /.byebug_history
 # Ignore application configuration
 /config/application.yml
+
+/node_modules
