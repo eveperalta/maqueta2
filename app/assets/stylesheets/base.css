@@ -183,6 +183,7 @@ span{
 .close{
   float: right;
   background-color: #fff;
+  border: none;
 }
 /*---------------------------------CARRUSEL-------------*/
 .card{
@@ -280,6 +281,9 @@ i.carrito-icon{
 /*margen boton remove del carrito*/
 .cantidad-rem-btn{
   margin-left: -40px;
+  background-color: #fff !important;
+  color: #000 !important;
+  text-align: center !important;
 }
 .cantidad-add-btn{
   background-color: #fff !important;
@@ -288,8 +292,8 @@ i.carrito-icon{
 }
 /*cambiar color a los botones*/
 .waves-effect{
-  background-color: #fff !important;
-  color: #000 !important;
+  background-color: #fff ;
+  color: #000 ;
 }
 .btn-small{
   background-color: #1645BA !important;
