@@ -181,6 +181,7 @@ span{
 }
 .close{
   float: right;
+  background-color: #fff;
 }
 /*---------------------------------CARRUSEL-------------*/
 .card{
@@ -258,7 +259,7 @@ div.slick-slide > div.card{
 span#carrito-bagde{
   display: inline-block !important;
   float: none !important;
-  margin-left: 15px !important;
+  margin-left: 18px !important;
   line-height: 22px !important;
   height: 20px !important;
   background-color: white !important;
