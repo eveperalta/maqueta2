@@ -289,12 +289,13 @@ i.carrito-icon{
   background-color: #fff !important;
   color: #000 !important;
   text-align: center !important;
+  margin-right: 
 }
-/*cambiar color a los botones*/
+/*cambiar color a los botones
 .waves-effect{
-  background-color: #fff ;
-  color: #000 ;
-}
+  background-color: #fff !important ;
+  color: #000 !important ;
+}*/
 .btn-small{
   background-color: #1645BA !important;
 }

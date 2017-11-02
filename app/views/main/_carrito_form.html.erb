@@ -4,9 +4,9 @@
       <%= ff.hidden_field(:sku, value: item.sku) %>
       <%= ff.hidden_field(:tipo, value: item.tipo) %>
       <div class="col s2 offset-s1">
-        <button type="button" class="waves-effect btn-floating btn-small btn-flat cantidad-rem-btn <% if item.cantidad == 1 %> disabled <% end %>"><i class="material-icons">remove</i></button>
+        <button type="button" class="btn-floating btn-small btn-flat cantidad-rem-btn <% if item.cantidad == 1 %> disabled <% end %>"><i class="material-icons">remove</i></button>
         <%= ff.number_field(:cantidad, value: item.cantidad, min: 1, class: 'cantidad-item center-align') %>
-        <button type="button" class="waves-effect btn-floating btn-small btn-flat cantidad-add-btn"><i class="material-icons">add</i></button>
+        <button type="button" class="btn-floating btn-small btn-flat cantidad-add-btn"><i class="material-icons">add</i></button>
       </div>
       <div class="col s2 offset-s1">
       	<label class="input-field right-align"><%= item.tipo.to_s.titleize %> sku: <%= item.sku %> | Precio: $ <%= number_with_delimiter(item.precio, :delimiter => ',') %></label >
