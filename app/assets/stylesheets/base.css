@@ -281,6 +281,9 @@ i.carrito-icon{
   margin: 10px;
   padding: 5px;
 }
+#carrito-precio-total span{
+  color: #000 !important;
+}
 /*margen boton remove del carrito*/
 .cantidad-rem-btn{
   margin-left: -40px;
