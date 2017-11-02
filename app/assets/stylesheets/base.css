@@ -71,6 +71,7 @@ nav{
   padding-right: 30px;
 
 }
+/*este es el boton de refesh*/
 .car{
   color: #fff;
 }
@@ -276,7 +277,15 @@ i.carrito-icon{
   margin: 10px;
   padding: 5px;
 }
-
+/*margen boton remove del carrito*/
+.cantidad-rem-btn{
+  margin-left: -40px;
+}
+.cantidad-add-btn{
+  background-color: #fff !important;
+  color: #000 !important;
+  text-align: center !important;
+}
 /*cambiar color a los botones*/
 .waves-effect{
   background-color: #fff !important;
