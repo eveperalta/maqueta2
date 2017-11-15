@@ -1,9 +1,13 @@
 <%= fields_for(type) do |f| %>
-  <div class="col s4 m4">
+  <!--<div class="col s4 m4">-->
+  <a class="col s4 m4" >
     <div class="card medium hoverable">
-      <div class="card-image">
+      <!--<div class="card-image">
         <img class="img-responsive" src="<%= item.img_url %>">
-      </div>
+      </div>-->
+      <a class="card-image scale-transition set_background" data-img_url="<%= item.img_url %>">
+        <img class="img-responsive" src="<%= item.img_url %>">
+      </a>
       <li class="divider"></li>
       <div class="card-content" style="padding-top:10px; ">
         <p>Descripcion: <%= item.descripcion %></p>
@@ -12,10 +16,12 @@
         <p>SKU: <%= item.sku %></p>
         <div style="position:absolute; bottom:15px; left:15px; right:15px;">
           <div style="float:left; width:33%;padding-top:20px;">
-         <!--   <button class="btn-floating btn-small scale-transition set_background" data-img_url="<%= item.img_url %>">
-              <i class="material-icons">visibility</i>
-            </button>--><!-- Boton de visibilidad-->
-          </div>
+          
+          <!--   <button class="btn-floating btn-small scale-transition set_background" data-img_url="<%= item.img_url %>">
+          <i class="material-icons">visibility</i>
+        </button>--><!-- Boton de visibilidad-->
+          
+        </div>
           <div style="float:left; width:33%; text-align:center;padding-top:20px;">
             <a href="<%= carrito_add_path(item.sku) %>" class="btn-floating btn-small scale-transition shopping_cart">
               <i class="material-icons">shopping_basket</i>
@@ -37,5 +43,6 @@
         <%= f.hidden_field(:superficie, value: item.superficie) %>
       </div>
     </div>
-  </div>
+  <!--</div>-->
+  </a>
 <% end -%>

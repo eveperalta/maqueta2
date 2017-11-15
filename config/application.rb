@@ -25,21 +25,39 @@ module Maqueta2
     config.assets.enabled = true
     config.assets.paths << Rails.root.join('/app/assets/fonts')
 
-    config.action_mailer.delivery_method = :smtp
+    #config.action_mailer.delivery_method = :smtp
+    config.action_mailer.default_url_options = { 
+      :host => "beta-sodimaqueta.herokuapp.com"
+    }
     
     # config.action_mailer.mailgun_settings = {
     #         api_key: ENV['api_key'],
     #         domain: ENV['domain']
     # }
 
-    ActionMailer::Base.smtp_settings = {
-      :port           => ENV["mail_jet_port"],
-      :address        => ENV["mail_jet_address"],
-      :user_name      => ENV["mail_jet_usr_name"],
-      :password       => ENV["mail_jet_pass"],
-      # :domain         => ENV['sendgrid_domain'],
-      :authentication => :plain,
-      :enable_starttls_auto => true
+    # Prueba Axity
+    ActionMailer::Base.delivery_method = :smtp
+    ActionMailer::Base.raise_delivery_errors = true
+    
+    config.action_mailer.smtp_settings = {
+        :address => "smtp.gmail.com",
+        :port => 587,
+        :domain => "gmail.com",
+        :user_name => "sodimacmailer@gmail.com",
+        :password => "Sodimac2017",
+        :authentication => "plain",
+        :enable_starttls_auto => true
     }
+    #ActionMailer::Base.smtp_settings = {
+    #  :port           => ENV["mail_jet_port"],
+    #  :address        => ENV["mail_jet_address"],
+    #  :user_name      => ENV["mail_jet_usr_name"],
+    #  :password       => ENV["mail_jet_pass"],
+      # :domain         => ENV['sendgrid_domain'],
+     # :authentication => :plain,
+    #  :enable_starttls_auto => true
+    #}
+    
+    
   end
 end
